@@ -68,4 +68,6 @@ theme: landscape
 # Deployment
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
-  type:
+  type: github
+  repository: git@github.com:wanderyt/wanderyt.github.io.git
+  branch: master
