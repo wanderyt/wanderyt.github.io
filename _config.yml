@@ -3,16 +3,16 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
-subtitle:
-description:
-author: John Doe
-language:
-timezone:
+title: Wanderyt的博客
+subtitle: 会踢足球的程序猿
+description: Wanderyt Blog
+author: Wanderyt
+email: wanderyt1988@163.com
+language: zh-CN
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: http://wanderyt.github.io
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
