@@ -35,8 +35,6 @@ Hexo的[主题列表](https://github.com/tommy351/hexo/wiki/Themes)
 
 在[Disqus官网](http://disqus.com/)申请新网站的 shortname
 
-![disqus-create](http://wanderyt.github.io/images/disqus-info.png)
-
 配置全局 _config.yml 文件
 
     disqus_shortname: wanderyt
