@@ -53,4 +53,4 @@ Hexo的[主题列表](https://github.com/tommy351/hexo/wiki/Themes)
 
 其他的功能暂时还没有跟上。不过我用的主题是[Next](https://github.com/iissnan/hexo-theme-next)，Github上项目repository里已经有足够多的其他特性的讲解。有兴趣的同学可以一一查看。
 
-目前似乎还咩有找到好的解决图片访问的方法。会继续研究。
+目前似乎还没有找到好的解决图片访问的方法。会继续研究。
