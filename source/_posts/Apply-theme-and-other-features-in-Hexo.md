@@ -35,6 +35,8 @@ Hexo的[主题列表](https://github.com/tommy351/hexo/wiki/Themes)
 
 在[Disqus官网](http://disqus.com/)申请新网站的 shortname
 
+![Disqus](images/disqus-info.png)
+
 配置全局 _config.yml 文件
 
     disqus_shortname: wanderyt
@@ -47,8 +49,43 @@ Hexo的[主题列表](https://github.com/tommy351/hexo/wiki/Themes)
 
     duoshuo_shortname: wanderyt
 
+## 3. Google统计
+
+注册[Google Analytics](http://www.google.cn/intl/zh-CN_ALL/analytics/learn/index.html)。
+
+在全局 _config.yml 文件中添加：
+
+    google_analytics: UA-[TrackingID]-1
+
+## 4. 图片显示
+
+把图片放到 source/images 目录下
+
+    ![](images/xxx.jpg)
+
+## 5. Sitemap网站地图
+
+安装插件
+
+    $ npm install hexo-generator-sitemap
+
+之后去百度/谷歌站长工具注册，并提交网站的sitemap。
+
+将下面两行代码贴至主题中layout/_partials/head.swig文件。
+
+    <meta name="baidu-site-verification" content="LmCOIrwcO6" />
+    <meta name="google-site-verification" content="0ZYSkBO0_qFiD-ZU4ZG5y9iVG9b0OhuhIoYCBWPg6mk" />
+
+## 6. Swifttype
+
+[Swifttype](https://swiftype.com/home)，可以用来生成站内搜索框。
+
+注册后，Create Engine，并通过默认的搜索功能来生成安装搜索框。生成代码后可以再代码中看到自己的your-swiftype-key。
+
+在站点的 _config.yml 中增加
+
+    swiftype_key: your-swiftype-key
+
 ## 后记
 
-其他的功能暂时还没有跟上，包括sitemap。不过我用的主题是[Next](https://github.com/iissnan/hexo-theme-next)，Github上项目repository里已经有足够多的其他特性的讲解。有兴趣的同学可以一一查看。
-
-目前似乎还没有找到好的解决图片访问的方法。会继续研究。
+我用的主题是[Next](https://github.com/iissnan/hexo-theme-next)，Github上项目repository里已经有足够多的其他特性的讲解。有兴趣的同学可以一一查看。
