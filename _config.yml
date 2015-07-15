@@ -10,6 +10,7 @@ author: Wanderyt
 email: wanderyt1988@163.com
 language: zh-Hans
 avatar: /images/photo.jpg
+since: 2015
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
@@ -70,6 +71,12 @@ theme: next
 disqus_shortname: wanderyt
 google_analytics: UA-65056997-1
 swiftype_key: nsd1ovgQ5zzmNzCi8zYW
+
+# Social links
+social:
+  github: https://github.com/wanderyt
+  twitter: https://twitter.com/wanderyt
+  weibo: http://weibo.com/wanderyt
 
 # Deployment
 ## Docs: http://hexo.io/docs/deployment.html
