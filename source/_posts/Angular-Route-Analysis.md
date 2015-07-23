@@ -5,6 +5,8 @@ categories:
 tags:
 - AngularJS
 - Javascript
+photos:
+- http://wanderyt.github.io/images/angular-router-1.png
 ---
 
 之前去面试前端工程师的时候，提到AngularJS总会被问到一个问题，AngularJS的路由的实现原理是什么。
@@ -12,6 +14,8 @@ tags:
 自己的理解一直不是很深，看过的技术帖子也没有讲的比较深入的，今天总算看到一篇细致的讲解。分享一下。
 
 转自： [Angular路由深入浅出](http://div.io/topic/1096)
+
+<!--more-->
 
 ## Angular路由
 

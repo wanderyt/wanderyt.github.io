@@ -19,6 +19,8 @@ Exception Details:
 
 > System.TypeInitializationException: An exception was thrown by the type initializer for GitCommands.AppSettings ---> System.Xml.XmlException: Unexpected XML declaration. The XML declaration must be the first node in the document, and no white space characters are allowed to appear before it. Line 104, position 9.
 
+<!--more-->
+
 ## Solution
 
 The problem was in the file
@@ -30,4 +32,4 @@ Remove the file, and problem gone.
 
 Why? No reason found on web. Waiting to see further details.
 
-Source: https://github.com/gitextensions/gitextensions/issues/2710
+Source: <https://github.com/gitextensions/gitextensions/issues/2710>

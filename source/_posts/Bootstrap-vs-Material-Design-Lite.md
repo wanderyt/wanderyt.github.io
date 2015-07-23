@@ -55,6 +55,8 @@ Here is the comparison view for each main category.
 
 Demo Kit : <http://demo.tutorialzine.com/2015/07/comparing-bootstrap-with-mdl/?grid>
 
+<!--more-->
+
 ### 1. Grid
 
 Arguably, the grid is the most important building block for a modern web page. It makes it possible for a design to scale from smartphones to large desktops.

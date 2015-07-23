@@ -4,6 +4,8 @@ categories:
 - Blog stuff
 tags:
 - Hexo
+photos:
+- http://wanderyt.github.io/images/disqus-info.png
 ---
 这一篇主要做一些Hexo的后续工作。
 
@@ -26,6 +28,8 @@ Hexo的[主题列表](https://github.com/tommy351/hexo/wiki/Themes)
 全局配置文件 _config.yml 中 theme 一行改成想要的主题。
 
     theme: next
+
+<!--more-->
 
 ## 2. 评论
 

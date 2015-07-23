@@ -27,6 +27,8 @@ Node.js官方下载: [Node.js](http://nodejs.org/download/ "Node.js")
 
     $ npm install -g hexo
 
+<!--more-->
+
 ### 3.2 Quick Start
 
 在电脑中建立一个名字叫「Hexo」的文件夹（比如我建在了D:\Hexo），然后在此文件夹中右键打开Git Bash。执行下面的命令
