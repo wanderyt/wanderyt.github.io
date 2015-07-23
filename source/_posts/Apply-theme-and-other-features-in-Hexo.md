@@ -4,8 +4,6 @@ categories:
 - Blog stuff
 tags:
 - Hexo
-photos:
-- http://wanderyt.github.io/images/disqus-info.png
 ---
 这一篇主要做一些Hexo的后续工作。
 

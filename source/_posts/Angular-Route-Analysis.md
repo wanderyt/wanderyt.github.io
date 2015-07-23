@@ -5,8 +5,6 @@ categories:
 tags:
 - AngularJS
 - Javascript
-photos:
-- http://wanderyt.github.io/images/angular-router-1.png
 ---
 
 之前去面试前端工程师的时候，提到AngularJS总会被问到一个问题，AngularJS的路由的实现原理是什么。
