@@ -37,7 +37,7 @@ Hexo的[主题列表](https://github.com/tommy351/hexo/wiki/Themes)
 
 在[Disqus官网](http://disqus.com/)申请新网站的 shortname
 
-![Disqus](images/disqus-info.png)
+![Disqus](/images/disqus-info.png)
 
 配置全局 _config.yml 文件
 
@@ -87,6 +87,30 @@ Hexo的[主题列表](https://github.com/tommy351/hexo/wiki/Themes)
 在站点的 _config.yml 中增加
 
     swiftype_key: your-swiftype-key
+
+## 7. jsFiddle
+
+这是后来补充，作为程序猿经常要加入代码呈现，jsFiddle和codepen是常用的两种，可惜没有找到hexo对codepen的支持，只找到对jsFiddle的引用。
+
+    {% jsfiddle shorttag [tabs [skin [width [height]]]] %}
+
+至于要怎么用，甩出一段hexo的代码：
+
+    function jsfiddleTag(args, content) {
+      var id = args[0];
+      var tabs = args[1] && args[1] !== 'default' ? args[1] : 'js,resources,html,css,result';
+      var skin = args[2] && args[2] !== 'default' ? args[2] : 'light';
+      var width = args[3] && args[3] !== 'default' ? args[3] : '100%';
+      var height = args[4] && args[4] !== 'default' ? args[4] : '300';
+    
+      return '<iframe scrolling="no" width="' + width + '" height="' + height + '" src="http://jsfiddle.net/' + id + '/embedded/' + tabs +     '/' + skin + '" frameborder="0" allowfullscreen></iframe>';
+    }
+
+    shorttag - 就是jsFiddle生成代码段时url上的那段id。
+    tabs - 主要用到的就是html,css,js,result。
+    skin - 我还没找到，暂时先用light代替吧，因为这个参数不是可选的，除非你不想设置jsFiddle的大小。
+    width - 宽度
+    height - 高度
 
 ## 后记
 
