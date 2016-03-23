@@ -92,7 +92,9 @@ Hexo的[主题列表](https://github.com/tommy351/hexo/wiki/Themes)
 
 这是后来补充，作为程序猿经常要加入代码呈现，jsFiddle和codepen是常用的两种，可惜没有找到hexo对codepen的支持，只找到对jsFiddle的引用。
 
+    {% raw %}
     {% jsfiddle shorttag [tabs [skin [width [height]]]] %}
+    {% endraw %}
 
 至于要怎么用，甩出一段hexo的代码：
 
