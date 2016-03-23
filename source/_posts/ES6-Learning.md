@@ -8,11 +8,7 @@ tags:
 
 最近开始学习ES6，话说ES6出来快一年了，中间其实已经间断学习了一些，今天开始总结一下吧。
 
-这次学习还是基于[ruanyf的ES6教程](http://es6.ruanyifeng.com/#README)。想要学习比较深入还是看看这个教程或者ES6的官方文档吧。
-
-[ES6官方文档](http://www.ecma-international.org/ecma-262/6.0/)。
-
-曾经看到有人组织翻译这个官方文档，贴一个
+这次学习还是基于[ruanyf的ES6教程](http://es6.ruanyifeng.com/#README)。想要学习比较深入还是看看这个教程或者[ES6官方文档](http://www.ecma-international.org/ecma-262/6.0/)吧。
 
 首先，还是先附加一个网站，自动检测当前浏览器以及主流浏览器支持ES6的程度。感觉还是很有用的。
 
