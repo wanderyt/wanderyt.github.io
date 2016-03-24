@@ -79,6 +79,21 @@ for(let i = 0; i < 10; i++) {
 a[6](); // 输出6
 ```
 
+事实上，对于这段代码，使用babel-preset-es2015转换出的结果是：
+
+```javascript
+"use strict";
+var a = [];
+var _loop = function _loop(i) {
+  a[i] = function () {
+    console.log(i);
+  };
+};
+for (var i = 0; i < 10; i++) {
+  _loop(i);
+}
+```
+
 另外，ES5中函数声明会直接提升到作用域顶部，而在ES6中则不会。
 
 ## const
