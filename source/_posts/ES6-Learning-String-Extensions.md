@@ -1,4 +1,4 @@
-title: ES6 Learning String Extensions
+title: ES6 Learning - 字符串扩展
 date: 2016-03-24 13:59:09
 categories:
 - UI Development
