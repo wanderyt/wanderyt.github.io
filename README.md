@@ -18,6 +18,12 @@ Wanderyt的码农博客
     $ npm config set https-proxy http://proxy.sin.sap.corp:8080
     $ npm config set proxy http://proxy.sin.sap.corp:8080
 
+### 环境变量
+
+如果需要走这一步，可能是因为git或者git extensions没有装好。`System Variable`中`Path`加入：
+
+    ;C:\Program Files (x86)\Git\cmd;
+
 ### hexo
 
     $ npm install -g hexo
