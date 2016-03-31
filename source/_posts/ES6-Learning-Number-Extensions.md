@@ -1,4 +1,4 @@
-title: ES6 Learning 数值扩展
+title: ES6 Learning - 数值扩展
 date: 2016-03-25 11:03:14
 categories:
 - UI Development
