@@ -32,6 +32,8 @@ Number.isNaN("abc"); // false
 
 由此可以看出，传统的比较方法中，是将值先调用`Number()`转为数值，再进行判断，因此`isNaN("abc")`会得到true。而这两个新方法只对数值有效，非数值一律返回false。这样判断更加准确。
 
+<!--more-->
+
 ## Number.isInteger()
 
 用来判断一个值是否为整数。因为判断中用的是`floor(value) === value`，所以可以看出__25和25.0是同一个值__。

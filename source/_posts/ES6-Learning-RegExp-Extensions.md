@@ -23,6 +23,8 @@ new RegExp(/abc/ig, 'i').flags
 // "i"
 ```
 
+<!--more-->
+
 ## u修饰符
 
 因为ES6中支持了Unicode，原来的处理方式都会发生一些变化。

@@ -21,6 +21,8 @@ s.endsWith("Hello", 5);   // true
 s.includes("Hello", 1);   // false
 ```
 
+<!--more-->
+
 ## padStart(), padEnd()
 
 字符串前后补足长度函数。注意，这个是从ES7才会开始支持。目前浏览器都不会支持。

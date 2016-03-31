@@ -33,6 +33,8 @@ var p = new Point();
 p // { x: 0, y: 0 }
 ```
 
+<!--more-->
+
 ### 参数解构
 
 这里就涉及到一个`undefined`的属性值问题。
