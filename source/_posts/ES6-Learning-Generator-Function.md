@@ -281,7 +281,29 @@ g.throw();
 g.next();
 ```
 
-这个[问题](http://stackoverflow.com/questions/36446273/how-does-generator-prototype-throw-work-is-an-implicit-next-included)已经提问出去了，等等回答。
+这个[问题](http://stackoverflow.com/questions/36446273/how-does-generator-prototype-throw-work-is-an-implicit-next-included)已经提问出去了，回答似乎已经解决。另外，证明一点，`stackoverflow`上的反应还是比`segmentfault`要快很多，20分钟就解决了。
+
+总体思路就是，`g.next()`和`g.throw()`都是同样的工作原理，只不过，`g.throw()`执行之后会直接进入`finally`模块，如果没有则直接退出。
+
+```javascript
+var generator = function* () {
+  try {
+    yield 1;
+    yield 2;
+  } catch(e) {
+    console.log("catch exception...");
+  } finally {
+    yield 3;
+  }
+};
+var g = generator();
+g.next(); // Object {value: 1, done: false}
+g.throw();
+// catch exception...
+// Object {value: 3, done: false}
+g.next();
+// Object {value: undefined, done: true}
+```
 
 ## Generator.prototype.return()
 
@@ -323,11 +345,29 @@ g.next() // { done: false, value: 5 }
 g.next() // { done: true, value: 7 }
 ```
 
+## yield*语句
 
+用于在一个`Generator`函数中调用另一个`Generator`函数。
 
+相当于在外层`Generator`函数中调用了一个`for...of`循环。
 
+```javascript
+function* concat(iter1, iter2) {
+  yield* iter1;
+  yield* iter2;
+}
 
+// 等同于
 
+function* concat(iter1, iter2) {
+  for (var value of iter1) {
+    yield value;
+  }
+  for (var value of iter2) {
+    yield value;
+  }
+}
+```
 
 
 
