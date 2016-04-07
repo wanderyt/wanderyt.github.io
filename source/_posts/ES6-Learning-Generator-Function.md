@@ -97,7 +97,7 @@ g[Symbol.iterator]() === g
 
 __`yield`语句的返回值是`undefined`__。`next`方法可以带一个参数，被当做上一个`yield`语句的返回值。
 
-这一段感觉有点无法理解。看两段代码：
+~~这一段感觉有点无法理解。看两段代码：~~
 
 ```javascript
 function* gen() {
@@ -117,7 +117,7 @@ g.next(2);
 var generator = function* () {
   for(let i = 0; i < 10; i++) {
     var value = yield i;
-    console.log(i);
+    console.log(i); // 二了，应该输出value才是要测试的结果
   }
 };
 
@@ -149,9 +149,9 @@ b.next(12) // { value:8, done:false }
 b.next(13) // { value:42, done:true }
 ```
 
-上面代码中，第二次运行next方法的时候不带参数，导致y的值等于2 * undefined（即NaN），除以3以后还是NaN，因此返回对象的value属性也等于NaN。第三次运行Next方法的时候不带参数，所以z等于undefined，返回对象的value属性等于5 + NaN + undefined，即NaN。
+~~上面代码中，第二次运行next方法的时候不带参数，导致y的值等于2 * undefined（即NaN），除以3以后还是NaN，因此返回对象的value属性也等于NaN。第三次运行Next方法的时候不带参数，所以z等于undefined，返回对象的value属性等于5 + NaN + undefined，即NaN。~~
 
-如果向next方法提供参数，返回结果就完全不一样了。上面代码第一次调用b的next方法时，返回x+1的值6；第二次调用next方法，将上一次yield语句的值设为12，因此y等于24，返回y / 3的值8；第三次调用next方法，将上一次yield语句的值设为13，因此z等于13，这时x等于5，y等于24，所以return语句的值等于42。
+~~如果向next方法提供参数，返回结果就完全不一样了。上面代码第一次调用b的next方法时，返回x+1的值6；第二次调用next方法，将上一次yield语句的值设为12，因此y等于24，返回y / 3的值8；第三次调用next方法，将上一次yield语句的值设为13，因此z等于13，这时x等于5，y等于24，所以return语句的值等于42。~~
 
 注意，由于next方法的参数表示上一个yield语句的返回值，所以第一次使用next方法时，不能带有参数。V8引擎直接忽略第一次使用next方法时的参数，只有从第二次使用next方法开始，参数才是有效的。从语义上讲，第一个next方法用来启动遍历器对象，所以不用带有参数。
 
@@ -368,6 +368,238 @@ function* concat(iter1, iter2) {
   }
 }
 ```
+
+如果被代理的`Generator`函数有`return`语句，那么就可以向代理它的`Generator`函数返回数据。
+
+```javascript
+function *foo() {
+  yield 2;
+  yield 3;
+  return "foo";
+}
+
+function *bar() {
+  yield 1;
+  var v = yield *foo();
+  console.log( "v: " + v );
+  yield 4;
+}
+
+var it = bar();
+
+it.next()
+// {value: 1, done: false}
+it.next()
+// {value: 2, done: false}
+it.next()
+// {value: 3, done: false}
+it.next();
+// "v: foo"
+// {value: 4, done: false}
+it.next()
+// {value: undefined, done: true}
+```
+
+`yield*`命令可以很方便地取出嵌套数组的所有成员。
+
+```javascript
+function* iterTree(tree) {
+  if (Array.isArray(tree)) {
+    for(let i=0; i < tree.length; i++) {
+      yield* iterTree(tree[i]);
+    }
+  } else {
+    yield tree;
+  }
+}
+
+const tree = [ 'a', ['b', 'c'], ['d', 'e'] ];
+
+for(let x of iterTree(tree)) {
+  console.log(x);
+}
+// a
+// b
+// c
+// d
+// e
+```
+
+## 对象属性中的Generator函数
+
+```javascript
+let obj = {
+  * myGeneratorMethod() {
+    ···
+  }
+};
+// ------- 等价于 --------
+let obj = {
+  myGeneratorMethod: function* () {
+    // ···
+  }
+};
+```
+
+## Generator函数的this
+
+Generator函数返回的遍历器规定是Generator函数的实例，所以也继承了Generator函数的`prototype`上的方法。但它不是普通的构造函数，所以返回的不是`this`对象。
+
+```javascript
+function* g() {}
+
+g.prototype.hello = function () {
+  return 'hi!';
+};
+
+let obj = g();
+
+obj instanceof g // true
+obj.hello() // 'hi!'
+
+// ======================
+function* g() {
+  this.a = 11;
+}
+
+let obj = g();
+obj.a // undefined
+```
+
+如果必须要把Generator函数当做正常的构造函数来用，则可以生成一个空对象，然后使用`bind`方法绑定到Generator函数，这样，调用Generator函数之后空对象就包含了函数定义的属性。
+
+```javascript
+function* F(){
+  yield this.x = 2;
+  yield this.y = 3;
+}
+var obj = {};
+var f = F.bind(obj)();
+
+f.next(); // Object {value: 2, done: false}
+obj; // Object {x: 2}
+f.next(); // Object {value: 3, done: false}
+obj; // Object {x: 2, y: 3}
+```
+
+## 应用
+
+### 异步操作的同步化表达
+
+通过Generator函数逐行读取文本文件。
+
+```javascript
+function* numbers() {
+  let file = new FileReader("numbers.txt");
+  try {
+    while(!file.eof) {
+      yield parseInt(file.readLine(), 10);
+    }
+  } finally {
+    file.close();
+  }
+}
+```
+
+### 控制流管理
+
+回调函数写法。
+
+```javascript
+step1(function (value1) {
+  step2(value1, function(value2) {
+    step3(value2, function(value3) {
+      step4(value3, function(value4) {
+        // Do something with value4
+      });
+    });
+  });
+});
+```
+
+进阶。`Promise`应用。
+
+```javascript
+Q.fcall(step1)
+  .then(step2)
+  .then(step3)
+  .then(step4)
+  .then(function (value4) {
+    // Do something with value4
+  }, function (error) {
+    // Handle any error from step1 through step4
+  })
+  .done();
+```
+
+高阶。Generator函数。
+
+```javascript
+function* longRunningTask() {
+  try {
+    var value1 = yield step1();
+    var value2 = yield step2(value1);
+    var value3 = yield step3(value2);
+    var value4 = yield step4(value3);
+    // Do something with value4
+  } catch (e) {
+    // Handle any error from step1 through step4
+  }
+}
+
+scheduler(longRunningTask());
+
+function scheduler(task) {
+  setTimeout(function() {
+    var taskObj = task.next(task.value);
+    // 如果Generator函数未结束，就继续调用
+    if (!taskObj.done) {
+      task.value = taskObj.value
+      scheduler(task);
+    }
+  }, 0);
+}
+```
+
+如果要任务A和任务B都执行完才执行任务C，则如下：
+
+```javascript
+function* parallelDownloads() {
+  let [text1,text2] = yield [
+    taskA(),
+    taskB()
+  ];
+  console.log(text1, text2);
+  taskC();
+}
+```
+
+### 部署iterator接口
+
+可以利用Generator函数在任意对象上部署iterator接口。
+
+```javascript
+function* iterEntries(obj) {
+  let keys = Object.keys(obj);
+  for (let i=0; i < keys.length; i++) {
+    let key = keys[i];
+    yield [key, obj[key]];
+  }
+}
+
+let myObj = { foo: 3, bar: 7 };
+
+for (let [key, value] of iterEntries(myObj)) {
+  console.log(key, value);
+}
+
+// foo 3
+// bar 7
+```
+
+
+
+
 
 
 
