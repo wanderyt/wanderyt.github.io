@@ -54,13 +54,100 @@ __奥妙就在于yield命令的使用。__
 
 ### 异步任务的封装
 
+看一个案例。
 
+```javascript
+var fetch = require('node-fetch');
 
+function* gen(){
+  var url = 'https://api.github.com/users/github';
+  var result = yield fetch(url);
+  console.log(result.bio);
+}
 
+var g = gen();
+var result = g.next();
 
+result.value.then(function(data){
+  return data.json();
+}).then(function(data){
+  g.next(data);
+});
+```
 
+例子里用Generator函数实现了异步执行，但是连续调用`g.next()`显得流程管理上不是那么方便。
 
+## Thunk函数
 
+### 参数的求值策略
+
+传值调用还是传名调用。传值调用明显更通俗易懂，而且简单实用。而传名调用可能会有性能上的优化。
+
+```javascript
+function f(a, b){
+  return b;
+}
+
+f(3 * x * x - 2 * x - 1, x);
+```
+
+### Thunk函数的含义
+
+传名调用实现就是将参数放到一个临时函数中，再将这个临时函数传入函数体。这个临时函数就是Thunk函数。
+
+```javascript
+function f(m){
+  return m * 2;
+}
+
+f(x + 5);
+
+// 等同于
+
+var thunk = function () {
+  return x + 5;
+};
+
+function f(thunk){
+  return thunk() * 2;
+}
+```
+
+### Thunk in Javascript
+
+Javascript是执行的传值调用。Thunk将多参数函数替换成单参数版本，只接受回调函数作为参数。
+
+```javascript
+// 正常版本的readFile（多参数版本）
+fs.readFile(fileName, callback);
+
+// Thunk版本的readFile（单参数版本）
+var readFileThunk = Thunk(fileName);
+readFileThunk(callback);
+
+var Thunk = function (fileName){
+  return function (callback){
+    return fs.readFile(fileName, callback);
+  };
+};
+```
+
+一个简单的Thunk函数转换器。
+
+```javascript
+var Thunk = function(fn){
+  return function (){
+    var args = Array.prototype.slice.call(arguments);
+    return function (callback){
+      args.push(callback);
+      return fn.apply(this, args);
+    }
+  };
+};
+
+var readFileThunk = Thunk(fs.readFile);
+readFileThunk(fileA)(callback);
+```
 
 
 
