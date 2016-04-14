@@ -149,8 +149,34 @@ var readFileThunk = Thunk(fs.readFile);
 readFileThunk(fileA)(callback);
 ```
 
+### Generator函数流程管理
 
+正常情况来说，Generator函数封装的异步操作可以如下。
 
+```javascript
+var fs = require('fs');
+var thunkify = require('thunkify');
+var readFile = thunkify(fs.readFile);
+
+var gen = function* (){
+  var r1 = yield readFile('/etc/fstab');
+  console.log(r1.toString());
+  var r2 = yield readFile('/etc/shells');
+  console.log(r2.toString());
+};
+
+var g = gen();
+
+var r1 = g.next();
+r1.value(function(err, data){
+  if (err) throw err;
+  var r2 = g.next(data);
+  r2.value(function(err, data){
+    if (err) throw err;
+    g.next(data);
+  });
+});
+```
 
 
 
