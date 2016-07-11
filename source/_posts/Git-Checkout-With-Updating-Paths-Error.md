@@ -14,7 +14,7 @@ During co-development process, after we fork a repository, we always want to kee
     upstream    git@github.corp.ebay.com:Stubhub/app-browse.git (fetch)
     upstream    git@github.corp.ebay.com:Stubhub/app-browse.git (push)
 
-    $ it checkout -B develop upstream/develop
+    $ git checkout -B develop upstream/develop
     fatal: Cannot update paths and switch to branch 'develop' at the same time.
     Did you intend to checkout 'upstream' which can not be resolved as commit?
 
