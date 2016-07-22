@@ -28,4 +28,4 @@ If there are commits after the lastest sync, the `remote-develop` will be ahead 
 
 Then you have updated the local branch `develop` with lastest code. Finally the update for `you/repo` should be made to keep the two repos sync.
 
-    $ git push
+    $ git push you develop
