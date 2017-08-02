@@ -90,7 +90,7 @@ Hexo的[主题列表](https://github.com/tommy351/hexo/wiki/Themes)
 
 ## 7. jsFiddle
 
-这是后来补充，作为程序猿经常要加入代码呈现，jsFiddle和codepen是常用的两种，可惜没有找到hexo对codepen的支持，只找到对jsFiddle的引用。
+这是后来补充，作为程序猿经常要加入代码呈现，jsFiddle和codepen是常用的两种。
 
     {% raw %}
     {% jsfiddle shorttag [tabs [skin [width [height]]]] %}
@@ -113,6 +113,14 @@ Hexo的[主题列表](https://github.com/tommy351/hexo/wiki/Themes)
     skin - 我还没找到，暂时先用light代替吧，因为这个参数不是可选的，除非你不想设置jsFiddle的大小。
     width - 宽度
     height - 高度
+
+codepen支持：
+
+    {% raw %}
+    {% codepen userId|anonymous|anon slugHash theme [defaultTab [height [width]]] %}
+    {% endraw %}
+
+`userId`是url中的user id，`slugHash`和`theme`可以在对应codepen页面的源码中找到对应的值。`defaultTab`只能选择一个，这个与jsfidder不太一样。否则如果设置多个，比如`html,css,result`，那么将无法显示codepen。
 
 ## 后记
 
