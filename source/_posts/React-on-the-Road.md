@@ -90,10 +90,19 @@ class IncreaserPanel extends React.Component {
         this.state = {
             counter: 1
         };
+
+        // Bind increaserMock with this context so that this.increaserMock could be used correctly
+        this.increaserMock =  this.increaserMock.bind(this);
     }
 
     increaser() {
         console.log(this); // output is null if using {this.increaser}
+        this.setState({
+            counter: this.state.counter + 1
+        });
+    }
+
+    increaserMock() {
         this.setState({
             counter: this.state.counter + 1
         });
@@ -108,7 +117,8 @@ class IncreaserPanel extends React.Component {
                 <UIButton
                     text='+'
                     // onClick={() => this.increaser()}>  // this is correct, bind increaser function with this context
-                    onClick={this.increaser}> // will fail as this is null
+                    onClick={this.increaser} // will fail as this is null
+                    onClick={this.increaserMock}> // this also works
                 </UIButton>
             </section>
         );
