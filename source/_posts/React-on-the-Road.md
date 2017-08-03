@@ -1,4 +1,4 @@
-title: React on the Road
+title: React on the Road - Chapter 1
 date: 2017-07-31 09:41:30
 categories:
 - UI Development
@@ -55,7 +55,7 @@ class MyComponent extends React.Component {
 
 No functional use, just to help the debug to be clear.
 
-Issue blog: [https://stackoverflow.com/questions/41581130/what-is-react-component-displayname-is-used-for](https://stackoverflow.com/questions/41581130/what-is-react-component-displayname-is-used-for)
+Issue blog: [What is React component 'displayName' is used for?](https://stackoverflow.com/questions/41581130/what-is-react-component-displayname-is-used-for)
 
 React source code during debugging: [Debug code in react](https://github.com/facebook/react/blob/90294ead4c627715cb70f20ff448bb0d34ee4c1b/src/renderers/shared/stack/reconciler/ReactCompositeComponent.js#L50-L52)
 
@@ -125,3 +125,4 @@ class IncreaserPanel extends React.Component {
     }
 };
 ```
+
