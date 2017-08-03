@@ -126,3 +126,7 @@ Combination for `flex-grow`, `flex-shrink` and `flex-basis`.
 ```
 
 `flex-shrink` and `flex-basis` are optional. By default, `0 1 auto`.
+
+### Incompatible Setting
+
+Note that `float`, `clear` and `vertical-align` is not working under `flex` layout.
