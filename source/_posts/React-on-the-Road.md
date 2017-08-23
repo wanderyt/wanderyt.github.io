@@ -126,3 +126,34 @@ class IncreaserPanel extends React.Component {
 };
 ```
 
+### Export function
+
+In ES6 class function grammer, the `export` could be like this:
+```javascript
+import React from 'react';
+class MyComponent extends React.Component {
+    //...
+}
+export default MyComponent; // import MyComponent from 'myComponent.js'
+// or
+/**
+ * export {
+ *     MyComponent,         // import {MyComponent} from 'myComponent.js'
+ *     MySecondComponent,
+ *     //...
+ * }
+ */
+```
+
+In CMD guideline, the export could be written like this:
+```javascript
+import React from 'react';
+class MyComponent extends React.Component {
+    //...
+}
+module.exports = {
+    MyComponent: MyComponent // import {MyComponent} from 'myComponent.js'
+};
+```
+
+Not much difference, but if we use CMD guideline, it is easier to use in Server side render (SSR), because node.js supports CMD guideline.
