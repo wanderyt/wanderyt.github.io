@@ -26,7 +26,7 @@ const config = require('/path/to/config');
 
 <!--more-->
 
-### 转义 - Resolve
+#### 转义 - Resolve
 
 在这一步中，require方法会将文件的路径转为绝对路径。
 
