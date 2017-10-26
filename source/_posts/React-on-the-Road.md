@@ -126,6 +126,8 @@ class IncreaserPanel extends React.Component {
 };
 ```
 
+**Tips**: Using `onClick={() => this.increaser()}` will cause that every time on rendering function, this function will be recreated. Then especially with the case that it is used as a props to child react element, it will lead to rerendering of the child element. This is a waste of performance.
+
 ### Export function
 
 In ES6 class function grammer, the `export` could be like this:
