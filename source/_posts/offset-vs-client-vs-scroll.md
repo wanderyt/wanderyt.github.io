@@ -9,7 +9,7 @@ tags:
 
 先上一张神图：
 
-![offset-client-scroll](images/offset-client-scroll.jpg)
+![offset-client-scroll](https://note.youdao.com/yws/api/personal/file/WEB087e821ef9aacd904787a060a7933c6d?method=download&shareKey=54de0ea6d2cdae27470bbbab065ce521)
 
 以`height`为例：
 

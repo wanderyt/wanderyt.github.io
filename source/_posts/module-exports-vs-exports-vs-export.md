@@ -37,7 +37,7 @@ export {
 
 Nodejs遵循的是CommonJS规范，使用`require`方法来加载模块，而ES6中是使用`import`来加载模块。参考这个图片：
 
-![commonjs-es6](images/commonjs-es6.png)
+![commonjs-es6](https://note.youdao.com/yws/api/personal/file/WEBede5c09950ee9a19febbf7d2181ab39c?method=download&shareKey=f54086d77f07614dde2260d2fce3fb59)
 
 ### module.export vs exports
 
