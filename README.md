@@ -49,3 +49,9 @@ Wanderyt的码农博客
 ### 无法生成页面
 
 `hexo.g`之后生成的html页面均为空文件。这时需要检查一下`themes/next`下面是否有文件。为空则说明主题文件缺失导致无法生成。
+
+### Plugin load failed
+
+`hexo g`执行过程中报错：`ERROR Plugin load failed: hexo-renderer-marked`。应该是`yarn`和`npm`冲突的依赖的问题，建议使用`yarn`管理包依赖。
+
+删除`node_modules`文件夹，之后执行`yarn`来安装。
