@@ -1,0 +1,1286 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Javascript,AngularJS,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="wanderyt的博客" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="之前去面试前端工程师的时候，提到AngularJS总会被问到一个问题，AngularJS的路由的实现原理是什么。 自己的理解一直不是很深，看过的技术帖子也没有讲的比较深入的，今天总算看到一篇细致的讲解。分享一下。 转自： Angular路由深入浅出">
+<meta name="keywords" content="Javascript,AngularJS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Angular Route Analysis">
+<meta property="og:url" content="http://wanderyt.github.io/2015/07/21/Angular-Route-Analysis/index.html">
+<meta property="og:site_name" content="wanderyt的博客">
+<meta property="og:description" content="之前去面试前端工程师的时候，提到AngularJS总会被问到一个问题，AngularJS的路由的实现原理是什么。 自己的理解一直不是很深，看过的技术帖子也没有讲的比较深入的，今天总算看到一篇细致的讲解。分享一下。 转自： Angular路由深入浅出">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://wanderyt.github.io/2015/07/21/Angular-Route-Analysis/images/angular-router-1.png">
+<meta property="og:updated_time" content="2019-08-05T03:05:12.826Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Angular Route Analysis">
+<meta name="twitter:description" content="之前去面试前端工程师的时候，提到AngularJS总会被问到一个问题，AngularJS的路由的实现原理是什么。 自己的理解一直不是很深，看过的技术帖子也没有讲的比较深入的，今天总算看到一篇细致的讲解。分享一下。 转自： Angular路由深入浅出">
+<meta name="twitter:image" content="http://wanderyt.github.io/2015/07/21/Angular-Route-Analysis/images/angular-router-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wanderyt.github.io/2015/07/21/Angular-Route-Analysis/">
+
+
+
+
+
+  <title>Angular Route Analysis | wanderyt的博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-65056997-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wanderyt的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">会踢足球的程序猿</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input">
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'nsd1ovgQ5zzmNzCi8zYW','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://wanderyt.github.io/2015/07/21/Angular-Route-Analysis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wanderyt">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/photo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wanderyt的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Angular Route Analysis
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-07-21T15:10:53+08:00">
+                2015-07-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AngularJS/" itemprop="url" rel="index">
+                    <span itemprop="name">AngularJS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>之前去面试前端工程师的时候，提到AngularJS总会被问到一个问题，AngularJS的路由的实现原理是什么。</p>
+<p>自己的理解一直不是很深，看过的技术帖子也没有讲的比较深入的，今天总算看到一篇细致的讲解。分享一下。</p>
+<p>转自： <a href="http://div.io/topic/1096" target="_blank" rel="noopener">Angular路由深入浅出</a></p>
+<a id="more"></a>
+<h2 id="Angular路由"><a href="#Angular路由" class="headerlink" title="Angular路由"></a>Angular路由</h2><blockquote>
+<p>路由(<code>route</code>)，几乎所有的MVC(VM)框架都应该具有的特性，因为它是前端构建单页面应用(SPA)必不可少的组成部分。</p>
+</blockquote>
+<h2 id="0-1-ngRoute-vs-ui-router"><a href="#0-1-ngRoute-vs-ui-router" class="headerlink" title="0.1 ngRoute vs ui.router"></a>0.1 ngRoute vs ui.router</h2><p>首先，无论是使用哪种路由，作为框架额外的附加功能，它们都将以<code>模块依赖</code>的形式被引入，简而言之就是：在引入路由源文件之后，你的代码应该这样写(以<code>ui.router</code>为例)：</p>
+<pre><code>angular.module(&quot;myApp&quot;, [&quot;ui.router&quot;]); // myApp为自定义模块，依赖第三方路由模块ui.router
+</code></pre><p>这样做的目的是：<strong>在程序启动(bootstrap)的时候，加载依赖模块(如：ui.router)，将所有<code>挂载</code>在该模块的<code>服务(provider)</code>，<code>指令(directive)</code>，<code>过滤器(filter)</code>等都进行注册</strong>，那么在后面的程序中便可以调用了。</p>
+<p>说到这里，就得看看<code>ngRoute</code>模块和<code>ui.router</code>模块各自都提供了哪些服务，哪些指令？</p>
+<ol>
+<li>ngRoute</li>
+<li>$routeProvider(服务提供者) ——— 对应于下面的urlRouterProvider和stateProvider</li>
+<li>$route(服务) ——— 对应于下面的urlRouter和state</li>
+<li>$routeParams(服务) ——— 对应于下面的stateParams</li>
+<li>ng-view(指令) ——— 对应于下面的ui-view</li>
+<li>ui.router</li>
+<li>$urlRouterProvider(服务提供者) ——— 用来配置路由重定向</li>
+<li>$urlRouter(服务)</li>
+<li>$stateProvider(服务提供者) ——— 用来配置路由</li>
+<li>$state(服务) ——— 用来显示当前路由状态信息，以及一些路由方法（如：跳转）</li>
+<li>$stateParams(服务) ——— 用来存储路由匹配时的参数</li>
+<li>ui-view(指令) ——— 路由模板渲染，对应的dom相关联</li>
+<li>ui-sref(指令)</li>
+<li>…</li>
+</ol>
+<p>(注：服务提供者：用来提供服务实例和配置服务。)</p>
+<p>这样一看，其实<code>ui.router</code>和<code>ngRoute</code>大体的设计思路，对应的模块划分都是一致的(毕竟是同一个团队开发)，不同的地方在于功能点的实现和增强。</p>
+<hr>
+<p>那么问题来了：ngRoute弱在哪些方面，ui.router怎么弥补了这些方面?</p>
+<p>这里，列举两个最重要的方面来说(其他细节，后面再说)：</p>
+<ol>
+<li>多视图</li>
+<li>嵌套视图</li>
+</ol>
+<hr>
+<h3 id="多视图"><a href="#多视图" class="headerlink" title="多视图"></a>多视图</h3><blockquote>
+<p>多视图：页面可以显示多个动态变化的不同区块。</p>
+</blockquote>
+<p>这样的业务场景是有的：</p>
+<p>比如：页面一个区块用来显示页面状态，另一个区块用来显示页面主内容，当路由切换时，页面状态跟着变化，对应的页面主内容也跟着变化。</p>
+<p>首先，我们尝试着用<code>ngRoute</code>来做：</p>
+<p>html</p>
+<pre><code>&lt;div ng-view&gt;区块1&lt;/div&gt;
+&lt;div ng-view&gt;区块2&lt;/div&gt;
+</code></pre><p>js</p>
+<pre><code>$routeProvider
+    .when(&apos;/&apos;, {
+    template: &apos;hello world&apos;
+);
+</code></pre><p>我们在html中利用ng-view指令定义了两个区块，于是两个div中显示了相同的内容，这很合乎情理，但却不是我们想要的，但是又不能为力，因为，在ngRoute中：</p>
+<ol>
+<li>视图没有名字进行唯一标志，所以它们被同等的处理。</li>
+<li>路由配置只有一个模板，无法配置多个。</li>
+</ol>
+<p>ok，针对上述两个问题，我们尝试用<code>ui.router</code>来做：</p>
+<p>html</p>
+<pre><code>&lt;div ui-view&gt;&lt;/div&gt;
+&lt;div ui-view=&quot;status&quot;&gt;&lt;/div&gt;
+</code></pre><p>js</p>
+<pre><code>$stateProvider
+    .state(&apos;home&apos;, {
+        url: &apos;/&apos;,
+        views: {
+            &apos;&apos;: {
+                template: &apos;hello world&apos;
+            },
+            &apos;status&apos;: {
+                template: &apos;home page&apos;
+            }
+        }
+    });
+</code></pre><p>这次，结果是我们想要的，两个区块，分别显示了不同的内容，原因在于，在ui.router中：</p>
+<ol>
+<li>可以给视图命名，如：ui-view=”status”。</li>
+<li>可以在路由配置中根据视图名字(如：status)，配置不同的模板（其实还有controller等）。</li>
+</ol>
+<p>注：视图名是一个字符串，不可以包含<code>@</code>（原因后面会说）。</p>
+<hr>
+<h3 id="嵌套视图"><a href="#嵌套视图" class="headerlink" title="嵌套视图"></a>嵌套视图</h3><blockquote>
+<p>嵌套视图：页面某个动态变化区块中，嵌套着另一个可以动态变化的区块。</p>
+</blockquote>
+<p>这样的业务场景也是有的：</p>
+<p>比如：页面一个主区块显示主内容，主内容中的部分内容要求根据路由变化而变化，这时就需要另一个动态变化的区块嵌套在主区块中。</p>
+<p>其实，嵌套视图，在html中的最终表现就像这样：</p>
+<pre><code>&lt;div ng-view&gt;
+    I am parent
+    &lt;div ng-view&gt;I am child&lt;/div&gt;
+&lt;/div&gt;
+</code></pre><p>转成javascript，我们会在程序里这样写：</p>
+<pre><code>$routeProvider
+    .when(&apos;/&apos;, {
+    template: &apos;I am parent &lt;div ng-view&gt;I am child&lt;/div&gt;&apos;
+});
+</code></pre><p>倘若，你真的用ngRoute这样写，你会发现浏览器崩溃了，因为在ng-view指令link的过程中，代码会无限递归下去。</p>
+<p>那么造成这种现象的最根本原因：<strong>路由没有明确的父子层级关系！</strong></p>
+<p>看看<code>ui.router</code>是如何解决这一问题的？</p>
+<pre><code>$stateProvider
+    .state(&apos;parent&apos;, {
+        abstract: true,
+        url: &apos;/&apos;,
+        template: &apos;I am parent &lt;div ui-view&gt;&lt;/div&gt;&apos;
+    })
+    .state(&apos;parent.child&apos;, {
+        url: &apos;&apos;,
+        template: &apos;I am child&apos;
+    });
+</code></pre><ol>
+<li>巧妙地，通过<code>parent</code>与<code>parent.child</code>来确定路由的<code>父子关系</code>，从而解决无限递归问题。</li>
+<li>另外子路由的模板最终也将被插入到父路由模板的div[ui-view]中去，从而达到视图嵌套的效果。</li>
+</ol>
+<hr>
+<h2 id="ui-router工作原理"><a href="#ui-router工作原理" class="headerlink" title="ui.router工作原理"></a>ui.router工作原理</h2><blockquote>
+<p>路由，大致可以理解为：一个查找匹配的过程。</p>
+</blockquote>
+<p>对于前端<code>MVC(VM)</code>而言，就是将<code>hash值</code>(#xxx)与一系列的<code>路由规则</code>进行查找匹配，匹配出一个符合条件的规则，然后根据这个规则，进行数据的获取，以及页面的渲染。</p>
+<p>所以，接下来：</p>
+<ul>
+<li>第一步，学会如何创建路由规则？</li>
+<li>第二步，了解路由查找匹配原理？</li>
+</ul>
+<hr>
+<h3 id="路由的创建"><a href="#路由的创建" class="headerlink" title="路由的创建"></a>路由的创建</h3><p>首先，看一个简单的例子：</p>
+<pre><code>$stateProvider
+    .state(&apos;home&apos;, {
+        url: &apos;/abc&apos;,
+        template: &apos;hello world&apos;
+    });
+</code></pre><p>上面，我们通过调用<code>$stateProvider.state(...)</code>方法，创建了一个简单路由规则，通过参数，可以容易理解到：</p>
+<ol>
+<li>规则名：’home’</li>
+<li>匹配的url：’/abc’</li>
+<li>对应的模板：’hello world’</li>
+</ol>
+<p>意思就是说：当我们访问<code>http://xxxx#/abc</code>的时候，这个路由规则被匹配到，对应的模板会被填到某个<code>div[ui-view]</code>中。</p>
+<p>看上去似乎很简单，那是因为我们还没有深究具体的一些路由配置参数（我们后面再说）。</p>
+<p>这里需要深入的是：<code>$stateProvider.state(...)</code>方法，它做了些什么工作？</p>
+<ol>
+<li>首先，创建并存储一个state对象，里面包含着该路由规则的所有配置信息。</li>
+<li><p>然后，调用<code>$urlRouterProvider.when(...)</code>方法，进行路由的<code>注册</code>(之前是路由的创建)，代码里是这样写的：</p>
+<p> $urlRouterProvider.when(state.url, [‘$match’, ‘$stateParams’, function ($match, $stateParams) {</p>
+<pre><code>// 判断是否是同一个state || 当前匹配参数是否相同
+if ($state.$current.navigable != state || !equalForKeys($match, $stateParams)) {
+    $state.transitionTo(state, $match, { inherit: true, location: false });
+}
+</code></pre><p> }]);</p>
+</li>
+</ol>
+<p>上述代码的意思是：当<code>hash值</code>与<code>state.url</code>相匹配时，就执行后面那段回调，回调函数里面进行了两个条件判断之后，决定是否需要跳转到该state？</p>
+<hr>
+<p>这里就插入了一个话题：为什么说 “跳转到该state，而不是该url”？</p>
+<p>其实这个问题跟大家一直说的：<strong>“ui.router是基于state(状态)的，而不是url”</strong>是同一个问题。</p>
+<p>我的理解是这样的：之前就说过，路由存在着明确的<code>父子关系</code>，每一个路由可以理解为一个state，</p>
+<ol>
+<li>当程序匹配到某一个子路由时，我们就认为这个子路由state被激活，同时，它对应的父路由state也将被激活。</li>
+<li>我们还可以手动的激活某一个state，就像上面写的那样，<code>$state.transitionTo(state, ...)</code>;，这样的话，它的父state会被激活（如果还没有激活的话），它的子state会被销毁（如果已经激活的话）。</li>
+</ol>
+<hr>
+<p>ok，回到之前的路由注册，调用了<code>$urlRouterProvider.when(...)</code>方法，它做了什么呢？</p>
+<p>它创建了一个rule，并存储在rules集合里面，之后的，每次hash值变化，路由重新查找匹配都是通过遍历这个<code>rules</code>集合进行的。</p>
+<hr>
+<h3 id="路由的查找匹配"><a href="#路由的查找匹配" class="headerlink" title="路由的查找匹配"></a>路由的查找匹配</h3><p>有了之前，路由的创建和注册，接下来，自然会想到路由是如何查找匹配的？</p>
+<p>恐怕，这得从页面加载完毕说起：</p>
+<ol>
+<li>angular 在刚开始的$digest时，<code>$rootScope</code>会触发<code>$locationChangeSuccess</code>事件（angular在每次浏览器hash change的时候也会触发<code>$locationChangeSuccess</code>事件）</li>
+<li>ui.router 监听了<code>$locationChangeSuccess</code>事件，于是开始通过遍历一系列rules，进行路由查找匹配</li>
+<li>当匹配到路由后，就通过<code>$state.transitionTo(state,...)</code>，跳转激活对应的state</li>
+<li>最后，完成数据请求和模板的渲染</li>
+</ol>
+<p>可以从下面这段源代码看到，看到查找匹配的起始和过程：</p>
+<pre><code>function update(evt) {
+    // ...省略
+    function check(rule) {
+        var handled = rule($injector, $location);
+        // handled可以是返回：
+        // 1. 新的的url，用于重定向
+        // 2. false，不匹配
+        // 3. true，匹配
+        if (!handled) return false;
+
+        if (isString(handled)) $location.replace().url(handled);
+        return true;
+    }
+
+    var n = rules.length, i;
+
+    // 渲染遍历rules，匹配到路由，就停止循环
+    for (i = 0; i &lt; n; i++) {
+        if (check(rules[i])) return;
+    }
+    // 如果都匹配不到路由，使用otherwise路由(如果设置了的话)
+    if (otherwise) check(otherwise);
+}
+
+function listen() {
+    // 监听$locationChangeSuccess，开始路由的查找匹配
+    listener = listener || $rootScope.$on(&apos;$locationChangeSuccess&apos;, update);
+    return listener;
+}
+
+if (!interceptDeferred) listen();
+</code></pre><hr>
+<p>那么，问题来了：难道每次路由变化(hash变化)，由于监听了’$locationChangeSuccess’事件，都要进行rules的遍历来查找匹配路由，然后跳转到对应的state吗？</p>
+<p>答案是：肯定的，一般的路由器都是这么做的，包括ngRoute。</p>
+<p>那么ui.router对于这样的问题，会怎么进行优化呢？</p>
+<p>回归到问题：我们之所以要循环遍历rules，是因为要查找匹配到对应的路由(state)，然后跳转过去，倘若不循环，能直接找到对应的state吗？</p>
+<p>答案是：可以的。</p>
+<p>还记得前面说过，在用ui.router在创建路由时：</p>
+<ol>
+<li>会实例化一个对应的state对象，并存储起来(states集合里面)</li>
+<li>每一个state对象都有一个state.name进行唯一标识(如：’home’)</li>
+</ol>
+<p>根据以上两点，于是ui.router提供了另一个指令叫做：<code>ui-sref指令</code>，来解决这个问题，比如这样：</p>
+<pre><code>&lt;a ui-sref=&quot;home&quot;&gt;通过ui-sref跳转到home state&lt;/a&gt;
+</code></pre><p>当点击这个a标签时，会直接跳转到home state，而并不需要循环遍历rules，ui.router是这样做到的(这里简单说一下)：</p>
+<p>首先，ui-sref=”home”指令会给对应的dom添加<code>click事件</code>，然后根据state.name，直接跳转到对应的state，代码像这样：</p>
+<pre><code>element.bind(&quot;click&quot;, function(e) {
+    // ..省略若干代码
+    var transition = $timeout(function() {
+        // 手动跳转到指定的state
+        $state.go(ref.state, params, options);
+    });
+});
+</code></pre><p>跳转到对应的state之后，ui.router会做一个善后处理，就是改变hash，所以理所当然，会触发’$locationChangeSuccess’事件，然后执行回调，但是在回调中可以通过一个判断代码规避循环rules，像这样：</p>
+<pre><code>function update(evt) {
+    var ignoreUpdate = lastPushedUrl &amp;&amp; $location.url() === lastPushedUrl;
+
+    // 手动调用$state.go(...)时，直接return避免下面的循环
+    if (ignoreUpdate) return true;
+
+    // 省略下面的循环ruls代码
+}
+</code></pre><p>说了那么多，其实就是想说，我们<code>不建议直接使用href=&quot;#/xxx&quot;来改变hash</code>，然后跳转到对应state(虽然也是可以的)，因为这样做会多了一步rules循环遍历，浪费性能，就像下面这样：</p>
+<pre><code>&lt;a href=&quot;#/abc&quot;&gt;通过href跳转到home state&lt;/a&gt;
+</code></pre><hr>
+<h2 id="0-3-路由详解"><a href="#0-3-路由详解" class="headerlink" title="0.3 路由详解"></a>0.3 路由详解</h2><blockquote>
+<p>这里详细地介绍ui.router的参数配置和一些深层次用法。</p>
+</blockquote>
+<hr>
+<p>不过，在这之前，需要一个demo，ui.router的<a href="http://angular-ui.github.io/ui-router/sample/#/" target="_blank" rel="noopener">官网demo</a>无非就是最好的学习例子，里面涉及了大部分的知识点，所以接下来的代码讲解大部分都会是这里面的(建议下载到本地进行代码学习)。</p>
+<p>为了更好的学习这个demo，我画了一张图来描述这个demo的contacts部分各个视图模块，如下：</p>
+<p><img src="images/angular-router-1.png" alt="angular-router"></p>
+<hr>
+<p>父与子<br>之前就说到，在ui.router中，路由就有父与子的关系(多个父与子凑起来就有了，祖先和子孙的关系)，从javascript的角度来说，其实就是路由对应的state对象之间存在着某种<code>引用</code>的关系。</p>
+<p>用一张数据结构的表示下contacts部分，大概是这样(<a href="http://gtms01.alicdn.com/tps/i1/TB1je9bHFXXXXXEXXXXysygGpXX-2481-1686.jpg" target="_blank" rel="noopener">原图</a>)：</p>
+<p>原图看出各个state对象之间通过<code>parent</code>字段维系了这样一个<code>父与子</code>的关系(粉红色的线)。</p>
+<p>ok，接下来就看下是如何定义路由的父子关系的？</p>
+<p>假设有一个父路由，如下：</p>
+<pre><code>$stateProvider
+.state(&apos;contacts&apos;, {});
+</code></pre><p>ui.router提供了几种方法来定义它的子路由：</p>
+<p>1.点标记法(<code>推荐</code>)</p>
+<pre><code>$stateProvider
+.state(&apos;contacts.list&apos;, {});
+</code></pre><p>通过状态名简单明了地来确定父子路由关系，如：状态名为’a.b.c’的路由，对应的父路由就是状态名为’a.b’路由。</p>
+<p>2.<code>parent</code>属性</p>
+<pre><code>$stateProvider
+.state({
+    name: &apos;list&apos;,// 状态名也可以直接在配置里指定
+    parent: &apos;contacts&apos;// 父路由的状态名
+});
+</code></pre><p>或者：</p>
+<pre><code>$stateProvider
+.state({
+    name: &apos;list&apos;,// 状态名也可以直接在配置里指定
+    parent: {// parent也可以是一个父路由配置对象(指定路由的状态名即可)
+        name: &apos;contacts&apos;
+    }
+});
+</code></pre><p>通过<code>parent</code>直接指定父路由，可以是父路由的状态名(字符串)，也可以是一个包含状态名的父路由配置(对象)。</p>
+<hr>
+<p>竟然路由有了<code>父与子</code>的关系，那么它们的注册顺序有要求嘛？</p>
+<p>答案是：没有要求，我们可以在父路由存在之前，创建子路由(不过，不是很推荐)，因为ui.router在遇到这种情况时，在内部会帮我们先<code>缓存</code>子路由的信息，等待它的父路由注册完毕后，再进行子路由的注册。</p>
+<hr>
+<h3 id="模板渲染"><a href="#模板渲染" class="headerlink" title="模板渲染"></a>模板渲染</h3><p>当路由成功跳转到指定的state时，ui.router会触发’$stateChangeSuccess’事件通知所有的ui-view进行模板重新渲染。</p>
+<p>代码是这样的：</p>
+<pre><code>if (options.notify) {
+    $rootScope.$broadcast(&apos;$stateChangeSuccess&apos;, to.self, toParams, from.self, fromParams);
+}
+</code></pre><p>而<code>ui-view</code>指令在进行<code>link</code>的时候，在其内部就已经监听了这一事件(消息)，来随时更新视图：</p>
+<pre><code>scope.$on(&apos;$stateChangeSuccess&apos;, function() {
+    updateView(false);
+});
+</code></pre><hr>
+<p>大体的模板渲染过程就是这样的，这里遇到一个问题，就是：每一个<code>div[ui-view]</code>在重新渲染的时候如何获取到对应视图模板的呢?</p>
+<p>要想知道这个答案，</p>
+<p>首先，我们得先看一下模板如何设置？</p>
+<p>一般在设置<code>单视图</code>的时候，我们会这样做：</p>
+<pre><code>$stateProvider
+    .state(&apos;contacts&apos;, {
+        abstract: true,
+        url: &apos;/contacts&apos;,
+        templateUrl: &apos;app/contacts/contacts.html&apos;
+    });
+</code></pre><p>在配置对象里面，我们用<code>templateUrl</code>指定模板路径即可。</p>
+<p>如果我们需要设置<code>多视图</code>，就需要用到<code>views</code>字段，像这样：</p>
+<pre><code>$stateProvider
+    .state(&apos;contacts.detail&apos;, {
+        url: &apos;/{contactId:[0-9]{1,4}}&apos;,
+        views: {
+            &apos;&apos; : {
+                templateUrl: &apos;app/contacts/contacts.detail.html&apos;,
+            },
+        &apos;hint@&apos;: {
+                template: &apos;This is contacts.detail populating the &quot;hint&quot; ui-view&apos;
+            },
+        &apos;menuTip&apos;: {
+            templateProvider: [&apos;$stateParams&apos;, function($stateParams) {
+                return &apos;&lt;hr&gt;&lt;small class=&quot;muted&quot;&gt;Contact ID: &apos; + $stateParams.contactId + &apos;&lt;/small&gt;&apos;;
+            }]
+        }
+    }
+});
+</code></pre><p>这里我们使用了另外两种方式设置模板：</p>
+<ol>
+<li><code>template</code>：直接指定模板内容，另外也可以是函数返回模板内容</li>
+<li><code>templateProvider</code>：通过依赖注入的调用函数的方式返回模板内容</li>
+</ol>
+<p>上述我们介绍了设置<code>单视图</code>和<code>多视图</code>模板的方式，其实最终它们在ui.router内部都会被统一格式化成的<code>views</code>的形式，且它们的key值会做特殊变化：</p>
+<p>上述的<code>单视图</code>会变成这样：</p>
+<pre><code>views: {
+    // 模板内容会被安插在根路由模板(index.html)的匿名视图下
+    &apos;@&apos;: {
+        abstract: true,
+        url: &apos;/contacts&apos;,
+        templateUrl: &apos;app/contacts/contacts.html&apos;
+    }
+}
+</code></pre><p><code>多视图</code>会变成这样：</p>
+<pre><code>views: {
+    // 模板内容会被安插在父路由(contacts)模板的匿名视图下
+    &apos;@contacts&apos;: {
+        templateUrl: &apos;app/contacts/contacts.detail.html&apos;,
+    },
+    // 模板内容会被安插在根路由(index.html)模板的名为hint视图下
+    &apos;hint@&apos;: {
+        template: &apos;This is contacts.detail populating the &quot;hint&quot; ui-view&apos;
+    },
+    // 模板内容会被安插在父路由(contacts)模板的名为menuTip视图下
+    &apos;menuTip@contacts&apos;: {
+        templateProvider: [&apos;$stateParams&apos;, function($stateParams) {
+            return &apos;&lt;hr&gt;&lt;small class=&quot;muted&quot;&gt;Contact ID: &apos; + $stateParams.contactId + &apos;&lt;/small&gt;&apos;;
+        }]
+    }
+}
+</code></pre><p>我们会发现views对象里面的<code>key</code>变化了，最明显的是出现了一个<code>@</code>符号，其实这样的key值是ui.router的一个设计，它的原型是：<code>viewName + &#39;@&#39; + stateName</code>，解释下：</p>
+<ol>
+<li><code>viewName</code></li>
+<li>指的是<code>ui-view=&quot;status&quot;</code>中的’status’</li>
+<li>也可以是’’(空字符串)，因为会有匿名的<code>ui-view</code>或者<code>ui-view=&quot;&quot;</code></li>
+<li><code>stateName</code><br> -默认情况下是父路由的state.name，因为子路由模板一般都安插在父路由的ui-view中</li>
+<li>也可以是’’(空字符串)，表示最顶层rootState</li>
+<li>还可以是任意的祖先<code>state.name</code></li>
+</ol>
+<p>这样原型的意思是，表示<strong>该模板将会被安插在名为stateName路由对应模板的viewName视图下</strong>(可以看看上面代码中的注释理解下)。</p>
+<p>其实这也解释了之前我说的：“为什么state.name里面不能存在<code>@</code>符号”？因为<code>@</code>在这里被用于特殊含义了。</p>
+<p>所以，到这里，我们就知道在<code>ui-view</code>重新进行模板渲染时，是根据<code>viewName + &#39;@&#39; + stateName</code>来获取对应的视图模板内容(其实还有controller等)的。</p>
+<hr>
+<p>其实，由于路由有了<code>父与子</code>的关系，某种程度上就有了override(覆盖或者重写)可能。</p>
+<p>父路由和子路由之间就存在着视图的override，像下面这段代码：</p>
+<pre><code>$stateProvider
+    .state(&apos;contacts.detail&apos;, {
+        url: &apos;/{contactId:[0-9]{1,4}}&apos;,
+        views: {
+            &apos;hint@&apos;: {
+                template: &apos;This is contacts.detail populating the &quot;hint&quot; ui-view&apos;
+            }
+        }
+    });
+
+$stateProvider
+    .state(&apos;contacts.detail.item&apos;, {
+        url: &apos;/item/:itemId&apos;,
+        views: {
+            &apos;hint@&apos;: {
+                template: &apos; This is contacts.detail.item overriding the &quot;hint&quot; ui-view&apos;
+            }
+        }
+    });
+</code></pre><p>上面两个路由(state)存在着<code>父与子</code>的关系，且他们都对<code>@hint</code>定义了视图，那么当子路由被激活时(它的父路由也会被激活)，我们应该选择哪个视图配置呢？</p>
+<p>答案是：子路由的配置。</p>
+<p>具体的，ui.router是如何实现这样的视图override的呢？</p>
+<p>简单地回答就是：通过javascript原型链实现的，你可以在每次路由切换成功后，尝试着打印出<code>$state.current.locals</code>这个变量一看究竟。</p>
+<hr>
+<h3 id="controller控制器"><a href="#controller控制器" class="headerlink" title="controller控制器"></a>controller控制器</h3><p>有了模板之后，必然不可缺少controller向模板对应的作用域(scope)中填写数据，这样才可以渲染出动态数据。</p>
+<p>我们可以为每一个视图添加不同的controller，就像下面这样：</p>
+<pre><code>$stateProvider
+    .state(&apos;contacts&apos;, {
+        abstract: true,
+        url: &apos;/contacts&apos;,
+        templateUrl: &apos;app/contacts/contacts.html&apos;,
+        resolve: {
+            &apos;contacts&apos;: [&apos;contacts&apos;, function( contacts){
+                return contacts.all();
+            }]
+         },
+        controller: [&apos;$scope&apos;, &apos;$state&apos;, &apos;contacts&apos;, &apos;utils&apos;, function ($scope, $state, contacts, utils) {
+            // 向作用域写数据
+            $scope.contacts = contacts;
+        }]
+    });
+</code></pre><p>注意：controller是可以进行<code>依赖注入</code>的，它注入的对象有两种：</p>
+<ol>
+<li>已经注册的服务(service)，如：<code>$state</code>，<code>utils</code></li>
+<li>上面的<code>reslove</code>定义的解决项(这个后面来说)，如：<code>contacts</code></li>
+</ol>
+<p>但是不管怎样，目的都是：向作用域里写数据。</p>
+<hr>
+<h3 id="reslove解决项"><a href="#reslove解决项" class="headerlink" title="reslove解决项"></a>reslove解决项</h3><p>resolve在state配置参数中，是一个对象(key-value)，每一个value都是一个可以依赖注入的函数，并且返回的是一个promise(当然也可以是值，resloved defer)。</p>
+<p>我们通常会在resolve中，进行数据获取的操作，然后返回一个promise，就像这样：</p>
+<pre><code>resolve: {
+    &apos;contacts&apos;: [&apos;contacts&apos;, function( contacts){
+        return contacts.all();
+    }]
+}
+</code></pre><p>上面有好多contacts，为了不混淆，我改一下代码：</p>
+<pre><code>resolve: {
+    &apos;myResolve&apos;: [&apos;contacts&apos;, function(contacts){
+        return contacts.all();
+    }]
+}
+</code></pre><p>这样就看清了，我们定义了resolve，包含了一个myResolve的key，它对应的value是一个函数，依赖注入了一个服务contacts，调用了<code>contacts.all()</code>方法并返回了一个promise。</p>
+<p>于是我们便可以在controller中引用myResolve，像这样：</p>
+<pre><code>controller: [&apos;$scope&apos;, &apos;$state&apos;, &apos;myResolve&apos;, &apos;utils&apos;, function ($scope, $state, contacts, utils) {
+    // 向作用域写数据
+    $scope.contacts = contacts;
+}]
+</code></pre><p>这样做的目的：</p>
+<ol>
+<li>简化了controller的操作，将数据的获取放在resolve中进行，这在多个视图多个controller需要相同数据时，有一定的作用。</li>
+<li>只有当reslove中的promise全部resolved(即数据获取成功)后，才会触发’$stateChangeSuccess’切换路由，进而实例化controller，然后更新模板。</li>
+</ol>
+<hr>
+<p>另外，子路由的resolve或者controller都是可以依赖注入父路由的resolve提供的数据服务，就像这样：</p>
+<pre><code>$stateProvider
+    .state(&apos;parent&apos;, {
+        url: &apos;&apos;,
+        resolve: {
+            parent: [&apos;$q&apos;, &apos;$timeout&apos;, function ($q, $timeout) {
+                var defer = $q.defer();
+                $timeout(function () {
+                    defer.resolve(&apos;parent&apos;);
+                }, 1000);
+                return defer.promise;
+            }]
+        },
+        template: &apos;I am parent &lt;div ui-view&gt;&lt;/div&gt;&apos;
+    })
+    .state(&apos;parent.child&apos;, {
+        url: &apos;/child&apos;,
+        resolve: {
+            child: [&apos;parent&apos;, function (parent) {// 调用父路由的解决项
+                return parent + &apos; and child&apos;;
+            }]
+        },
+        controller: [&apos;child&apos;, &apos;parent&apos;, function (child, parent) {// 调用自身的解决项，以及父路由的解决项
+            console.log(child, parent);
+        }],
+        template: &apos;I am child&apos;
+    });
+</code></pre><p>另外每一个视图也可以单独定义自己的resolve和controller，它们也是可以依赖注入自身的state.resolve，或者view下的resolve，或者父路由的reslove，就像这样：</p>
+<p>html</p>
+<pre><code>&lt;div ui-view&gt;&lt;/div&gt;
+&lt;div ui-view=&quot;status&quot;&gt;&lt;/div&gt;
+</code></pre><p>javascript:</p>
+<pre><code>$stateProvider
+    .state(&apos;home&apos;, {
+        url: &apos;/home&apos;,
+        resolve: {
+            common: [&apos;$q&apos;, &apos;$timeout&apos;, function ($q, $timeout) {// 公共的resolve
+                var defer = $q.defer();
+                $timeout(function () {
+                    defer.resolve(&apos;common data&apos;);
+                }, 1000);
+                return defer.promise;
+            }],
+        },
+        views: {
+            &apos;&apos;: {
+                resolve: {
+                    special: [&apos;common&apos;, function (common) {// 访问state.resolve
+                        console.log(common);
+                    }]
+                }
+            },
+            &apos;status&apos;: {
+                resolve: {
+                    common: function () {// 重写state.resolve
+                        return &apos;override common data&apos;
+                    }
+                },
+                controller: [&apos;common&apos;, function (common) {// 访问视图自身的resolve
+                    console.log(common);
+                }]
+            }
+        }
+    });
+</code></pre><p>总结一下：</p>
+<ol>
+<li>路由的controller除了可以依赖注入正常的service，也可以依赖注入resolve</li>
+<li>子路由的resolve可以依赖注入父路由的resolve，也可以重写父路由的resolve供controller调用</li>
+<li>路由可以有单独的state.resolve之外，还可以在views视图中单独配置resolve，视图resolve是可以依赖注入自身state.resolve甚至是父路由的state.resolve</li>
+</ol>
+<h2 id="0-4-相关其他angular文章"><a href="#0-4-相关其他angular文章" class="headerlink" title="0.4 相关其他angular文章"></a>0.4 相关其他angular文章</h2><p><a href="http://www.html-js.com/article/column/693" target="_blank" rel="noopener">Angular系列文章</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Javascript/" rel="tag"># Javascript</a>
+          
+            <a href="/tags/AngularJS/" rel="tag"># AngularJS</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/07/21/Bootstrap-vs-Material-Design-Lite/" rel="next" title="Bootstrap vs Material Design Lite">
+                <i class="fa fa-chevron-left"></i> Bootstrap vs Material Design Lite
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/07/23/npm-commands/" rel="prev" title="npm基本指令">
+                npm基本指令 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/photo.jpg" alt="wanderyt">
+          <p class="site-author-name" itemprop="name">wanderyt</p>
+           
+              <p class="site-description motion-element" itemprop="description">wanderyt Blog</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">50</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wanderyt" target="_blank" title="github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2031712337" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/wanderyt" target="_blank" title="twitter">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Angular路由"><span class="nav-number">1.</span> <span class="nav-text">Angular路由</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0-1-ngRoute-vs-ui-router"><span class="nav-number">2.</span> <span class="nav-text">0.1 ngRoute vs ui.router</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#多视图"><span class="nav-number">2.1.</span> <span class="nav-text">多视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#嵌套视图"><span class="nav-number">2.2.</span> <span class="nav-text">嵌套视图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ui-router工作原理"><span class="nav-number">3.</span> <span class="nav-text">ui.router工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#路由的创建"><span class="nav-number">3.1.</span> <span class="nav-text">路由的创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由的查找匹配"><span class="nav-number">3.2.</span> <span class="nav-text">路由的查找匹配</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0-3-路由详解"><span class="nav-number">4.</span> <span class="nav-text">0.3 路由详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模板渲染"><span class="nav-number">4.1.</span> <span class="nav-text">模板渲染</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#controller控制器"><span class="nav-number">4.2.</span> <span class="nav-text">controller控制器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reslove解决项"><span class="nav-number">4.3.</span> <span class="nav-text">reslove解决项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0-4-相关其他angular文章"><span class="nav-number">5.</span> <span class="nav-text">0.4 相关其他angular文章</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wanderyt</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

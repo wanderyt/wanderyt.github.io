@@ -1,0 +1,836 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Hexo,Blog,Git,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="wanderyt的博客" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="1. 安装node.jsNode.js官方下载: Node.js 2. 配置Github2.1 建立Repository建立与你用户名对应的仓库，仓库名必须为: your_user_name.github.io 2.2 配置SSH-Key3. 安装Hexo3.1 Git Command打开Git Bash，执行如下命令 $ npm install -g hexo">
+<meta name="keywords" content="Hexo,Blog,Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用Hexo搭建Github博客">
+<meta property="og:url" content="http://wanderyt.github.io/2015/07/13/Create-github-blog-with-hexo/index.html">
+<meta property="og:site_name" content="wanderyt的博客">
+<meta property="og:description" content="1. 安装node.jsNode.js官方下载: Node.js 2. 配置Github2.1 建立Repository建立与你用户名对应的仓库，仓库名必须为: your_user_name.github.io 2.2 配置SSH-Key3. 安装Hexo3.1 Git Command打开Git Bash，执行如下命令 $ npm install -g hexo">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-05T03:05:12.828Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用Hexo搭建Github博客">
+<meta name="twitter:description" content="1. 安装node.jsNode.js官方下载: Node.js 2. 配置Github2.1 建立Repository建立与你用户名对应的仓库，仓库名必须为: your_user_name.github.io 2.2 配置SSH-Key3. 安装Hexo3.1 Git Command打开Git Bash，执行如下命令 $ npm install -g hexo">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wanderyt.github.io/2015/07/13/Create-github-blog-with-hexo/">
+
+
+
+
+
+  <title>用Hexo搭建Github博客 | wanderyt的博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-65056997-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wanderyt的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">会踢足球的程序猿</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input">
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'nsd1ovgQ5zzmNzCi8zYW','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://wanderyt.github.io/2015/07/13/Create-github-blog-with-hexo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wanderyt">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/photo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wanderyt的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                用Hexo搭建Github博客
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-07-13T10:49:40+08:00">
+                2015-07-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Blog-stuff/" itemprop="url" rel="index">
+                    <span itemprop="name">Blog stuff</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1-安装node-js"><a href="#1-安装node-js" class="headerlink" title="1. 安装node.js"></a>1. 安装node.js</h2><p>Node.js官方下载: <a href="http://nodejs.org/download/" title="Node.js" target="_blank" rel="noopener">Node.js</a></p>
+<h2 id="2-配置Github"><a href="#2-配置Github" class="headerlink" title="2. 配置Github"></a>2. 配置Github</h2><h3 id="2-1-建立Repository"><a href="#2-1-建立Repository" class="headerlink" title="2.1 建立Repository"></a>2.1 建立Repository</h3><p>建立与你用户名对应的仓库，仓库名必须为: your_user_name.github.io</p>
+<h3 id="2-2-配置SSH-Key"><a href="#2-2-配置SSH-Key" class="headerlink" title="2.2 配置SSH-Key"></a>2.2 配置SSH-Key</h3><h2 id="3-安装Hexo"><a href="#3-安装Hexo" class="headerlink" title="3. 安装Hexo"></a>3. 安装Hexo</h2><h3 id="3-1-Git-Command"><a href="#3-1-Git-Command" class="headerlink" title="3.1 Git Command"></a>3.1 Git Command</h3><p>打开Git Bash，执行如下命令</p>
+<pre><code>$ npm install -g hexo
+</code></pre><a id="more"></a>
+<h3 id="3-2-Quick-Start"><a href="#3-2-Quick-Start" class="headerlink" title="3.2 Quick Start"></a>3.2 Quick Start</h3><p>在电脑中建立一个名字叫「Hexo」的文件夹（比如我建在了D:\Hexo），然后在此文件夹中右键打开Git Bash。执行下面的命令</p>
+<pre><code>$ hexo init
+[info] Copying data
+[info] You are almost done! Don&apos;t forget to run `npm install` before you start b
+logging with Hexo!
+</code></pre><p>Hexo随后会自动在目标文件夹建立网站所需要的文件。然后按照提示，运行npm install（在 /D/Hexo下）</p>
+<pre><code>$ npm install
+</code></pre><p>会在D:\Hexo目录中安装node_modules。</p>
+<p>运行下面的命令启动Hexo</p>
+<pre><code>$ hexo server
+[info] Hexo is running at localhost:4000. Press Ctrl+C to stop.
+</code></pre><p>表明Hexo Server已经启动了，在浏览器中打开<a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a>，这时可以看到Hexo已为你生成了一篇blog。</p>
+<p>按Ctrl+C 停止Server。</p>
+<p>部署到Github前需要配置_config.yml文件，首先找到下面的内容</p>
+<pre><code># Deployment
+## Docs: http://hexo.io/docs/deployment.html
+deploy:
+  type:
+</code></pre><p>然后将它们修改为</p>
+<pre><code># Deployment
+## Docs: http://hexo.io/docs/deployment.html
+deploy:
+  type: git
+  repository: http://github.com/wanderyt/wanderyt.github.io.git
+  branch: master
+</code></pre><blockquote>
+<p><em>NOTE</em></p>
+</blockquote>
+<blockquote>
+<p>Repository： 必须是<strong>HTTPS</strong>形式的URL</p>
+</blockquote>
+<blockquote>
+<p>Example: <a href="http://github.com/wanderyt/wanderyt.github.io.git" target="_blank" rel="noopener">http://github.com/wanderyt/wanderyt.github.io.git</a>.</p>
+</blockquote>
+<blockquote>
+<p>楼主当时因为看其他的教程说用SSH形式的URL，结果部署时一直报错no address associated with name，原因可能是Hexo版本升级之后设置方法更改。</p>
+</blockquote>
+<p>之后，执行一下命令。</p>
+<pre><code>$ npm install hexo-deployer-git --save
+</code></pre><p>提示安装成功后，重新生成并部署。</p>
+<pre><code>$ hexo clean
+$ hexo generate
+$ hexo deploy
+</code></pre><p>当部署完成后，在浏览器中打开<a href="https://your_user_name.github.io/" target="_blank" rel="noopener">http://your_user_name.github.io/</a>，正常显示网页，表明部署成功。</p>
+<p>否则，可能需要设置一下Repository的Github Page。</p>
+<p>点击 Github 上本项目的 Settings，GitHub Pages，将其设置为your_user_name.github.io</p>
+<p>至此，创建博客成功。</p>
+<p>下一篇写一下如何配置主题，评论之类的功能，依旧是依靠npm插件。</p>
+<hr>
+<p>写一下自己的感受。</p>
+<p>搭建博客的方法有很多，网上很多牛人都是用Express，其次用的多的是Jekyll。偶然间看到了Hexo，这个其实省去了很多自己做网页的时间，确实是方便了很多。</p>
+<p>接触Hexo之后，一直有一个想法，它是如何通过deploy命令，来把本地生成的markdown文件提交到github上，生成对应的html的。</p>
+<p>有试过git的童鞋可以发现，在当前的这个repository下面，执行<code>git fetch</code>命令后，会从remote branch上拉下很多新生成的代码，这些肯定是最近一次deploy之后传上去的文件。</p>
+<p>有时间一定要钻一下这个方法。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+          
+            <a href="/tags/Blog/" rel="tag"># Blog</a>
+          
+            <a href="/tags/Git/" rel="tag"># Git</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/07/13/Apply-theme-and-other-features-in-Hexo/" rel="prev" title="Hexo中添加主题等其他功能">
+                Hexo中添加主题等其他功能 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/photo.jpg" alt="wanderyt">
+          <p class="site-author-name" itemprop="name">wanderyt</p>
+           
+              <p class="site-description motion-element" itemprop="description">wanderyt Blog</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">50</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wanderyt" target="_blank" title="github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2031712337" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/wanderyt" target="_blank" title="twitter">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-安装node-js"><span class="nav-number">1.</span> <span class="nav-text">1. 安装node.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-配置Github"><span class="nav-number">2.</span> <span class="nav-text">2. 配置Github</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-建立Repository"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 建立Repository</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-配置SSH-Key"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 配置SSH-Key</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-安装Hexo"><span class="nav-number">3.</span> <span class="nav-text">3. 安装Hexo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Git-Command"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 Git Command</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Quick-Start"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 Quick Start</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wanderyt</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

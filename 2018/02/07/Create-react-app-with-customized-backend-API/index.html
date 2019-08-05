@@ -1,0 +1,815 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Nodejs,React,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="wanderyt的博客" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="目前在做一个图片展示页面，使用的是create-react-app搭建起来的react应用。只是突发奇想页面渲染过程中，如何能把图片保存在server端。 直接在React代码中使用保存文件的api目前还没有找到，所以只能寄希望于nodejs端来解决保存问题。 大概在网上搜了一下，目前普遍的做法跟自己想的比较类似，就是在nodejs自定义一个保存图片的api，然后React代码中发送api请求，n">
+<meta name="keywords" content="Nodejs,React">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Create react app with customized backend API">
+<meta property="og:url" content="http://wanderyt.github.io/2018/02/07/Create-react-app-with-customized-backend-API/index.html">
+<meta property="og:site_name" content="wanderyt的博客">
+<meta property="og:description" content="目前在做一个图片展示页面，使用的是create-react-app搭建起来的react应用。只是突发奇想页面渲染过程中，如何能把图片保存在server端。 直接在React代码中使用保存文件的api目前还没有找到，所以只能寄希望于nodejs端来解决保存问题。 大概在网上搜了一下，目前普遍的做法跟自己想的比较类似，就是在nodejs自定义一个保存图片的api，然后React代码中发送api请求，n">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-05T03:05:12.828Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Create react app with customized backend API">
+<meta name="twitter:description" content="目前在做一个图片展示页面，使用的是create-react-app搭建起来的react应用。只是突发奇想页面渲染过程中，如何能把图片保存在server端。 直接在React代码中使用保存文件的api目前还没有找到，所以只能寄希望于nodejs端来解决保存问题。 大概在网上搜了一下，目前普遍的做法跟自己想的比较类似，就是在nodejs自定义一个保存图片的api，然后React代码中发送api请求，n">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wanderyt.github.io/2018/02/07/Create-react-app-with-customized-backend-API/">
+
+
+
+
+
+  <title>Create react app with customized backend API | wanderyt的博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-65056997-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wanderyt的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">会踢足球的程序猿</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input">
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'nsd1ovgQ5zzmNzCi8zYW','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://wanderyt.github.io/2018/02/07/Create-react-app-with-customized-backend-API/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wanderyt">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/photo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wanderyt的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Create react app with customized backend API
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-07T15:41:25+08:00">
+                2018-02-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/UI-Development/" itemprop="url" rel="index">
+                    <span itemprop="name">UI Development</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>目前在做一个图片展示页面，使用的是<code>create-react-app</code>搭建起来的react应用。只是突发奇想页面渲染过程中，如何能把图片保存在server端。</p>
+<p>直接在React代码中使用保存文件的api目前还没有找到，所以只能寄希望于<code>nodejs</code>端来解决保存问题。</p>
+<p>大概在网上搜了一下，目前普遍的做法跟自己想的比较类似，就是在<code>nodejs</code>自定义一个保存图片的api，然后React代码中发送api请求，nodejs端捕获，并且保存对应的图片到server文件系统中。</p>
+<p>实践起来还是比较复杂的，中间遇到的问题也不少。</p>
+<h3 id="搭建Nodejs-Server"><a href="#搭建Nodejs-Server" class="headerlink" title="搭建Nodejs Server"></a>搭建Nodejs Server</h3><a id="more"></a>
+<p>使用<code>express</code>迅速搭建一个server，端口号暂定为5000。（Create React App默认的Webpack Server端口为3000）</p>
+<p><strong>server/server.js</strong>:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</span><br><span class="line"><span class="keyword">const</span> app = express();</span><br><span class="line"><span class="keyword">const</span> port = process.env.PORT || <span class="number">5000</span>;</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/api/downloadPicture'</span>, (req, resp) =&gt; &#123;</span><br><span class="line">    resp.send(<span class="string">'download success'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.listen(port, () =&gt; <span class="built_in">console</span>.log(<span class="string">`Listening on port <span class="subst">$&#123;port&#125;</span>`</span>));</span><br></pre></td></tr></table></figure>
+<p>接下来先模拟写一个图片下载的服务。目前项目里抓取的都是twitter上的图片，所以拿一个例子来说明。</p>
+<p>图片：”<a href="https://pbs.twimg.com/media/DUWPzZ7W4AExatH.jpg&quot;" target="_blank" rel="noopener">https://pbs.twimg.com/media/DUWPzZ7W4AExatH.jpg&quot;</a></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">http.get (&#123;</span><br><span class="line">    path: <span class="string">`https://pbs.twimg.com/media/DUWPzZ7W4AExatH.jpg`</span></span><br><span class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">    response.on(<span class="string">"end"</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"saved png"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>报错：<strong>Error: connect ECONNREFUSED</strong></p>
+<p>这个错误是说明无法与服务器连接。debug很久才发现，图片是存放在twitter网站的静态资源，需要翻墙使用代理才能下载到。加上公司的proxy，这个图片才算是能正常下载下来。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">http.get (&#123;</span><br><span class="line">    host: host, <span class="comment">// proxy host</span></span><br><span class="line">    port: port, <span class="comment">// proxy port</span></span><br><span class="line">    path: <span class="string">`https://pbs.twimg.com/media/DUWPzZ7W4AExatH.jpg`</span></span><br><span class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">    mkdirp(<span class="string">`<span class="subst">$&#123;process.cwd()&#125;</span><span class="subst">$&#123;path.sep&#125;</span>downloadImages`</span>, (err) =&gt; &#123;</span><br><span class="line">        <span class="keyword">var</span> imageFile = fs.createWriteStream(<span class="string">`<span class="subst">$&#123;process.cwd()&#125;</span><span class="subst">$&#123;path.sep&#125;</span>downloadImages<span class="subst">$&#123;path.sep&#125;</span><span class="subst">$&#123;imgName&#125;</span>`</span>);</span><br><span class="line">        response.on(<span class="string">"data"</span>, <span class="function"><span class="keyword">function</span>(<span class="params">chunk</span>)</span>&#123;</span><br><span class="line">            imageFile.write(chunk);</span><br><span class="line">        &#125;);</span><br><span class="line">        response.on(<span class="string">"end"</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">"saved png"</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>使用<code>mkdirp</code>是因为需要自动创建下载目录。<code>fs.writeFileSync</code>不负责创建路径。事实上，如果路径不存在，会直接报错导致程序中断。</p>
+<p>图片的写入需要创建一个fileStream来实现。给repsonse上绑一个data的监听事件，一旦是有数据返回就往stream上写数据流直到response返回结束。</p>
+<p>至此，nodejs api编写完成。</p>
+<h3 id="React发送请求"><a href="#React发送请求" class="headerlink" title="React发送请求"></a>React发送请求</h3><p>在React中，在<code>componentDidMount</code>中发送请求，这样就不会阻塞页面的加载渲染。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">componentDidMount() &#123;</span><br><span class="line">    fetch(<span class="string">`http://localhost:5000/api/downloadPicture?img=<span class="subst">$&#123;img&#125;</span>&amp;type=twitter`</span>).then(<span class="function">(<span class="params">resp</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(resp);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>直接使用5000端口的API端点，前端会直接报错。这里存在一个跨域请求的访问，出于安全考虑，浏览器会禁止这类访问，并将请求状态置为500。所以我们只能使用3000端口。但如何把端口从3000映射到nodejs的5000端口上？</p>
+<p>此时需要在<code>package.json</code>里增加一行：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  //...</span><br><span class="line">  "proxy": "http://localhost:5000"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关于这个proxy的定义，只在网上找到这么一句解释：</p>
+<blockquote>
+<p>A proxy to use for outgoing https requests. If the HTTPS_PROXY or https_proxy or HTTP_PROXY or http_proxy environment variables are set, proxy settings will be honored by the underlying request library.</p>
+</blockquote>
+<p>大概就是如果使用了<code>proxy</code>，所有HTTP / HTTPS的请求都会被代理到proxy设定的域名下。这样我们就可以调用localhost:5000下的服务了。</p>
+<h3 id="启动服务器"><a href="#启动服务器" class="headerlink" title="启动服务器"></a>启动服务器</h3><p>前后端相应的配置都已经完成，还剩最后一步：启动两个服务器。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  //...</span><br><span class="line">  "scripts": &#123;</span><br><span class="line">    "start": "node scripts/start.js",</span><br><span class="line">    "poststart": "node server/server.js"</span><br><span class="line">  &#125;,</span><br><span class="line">  //...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很遗憾，这样写并不能启动我们自定义的服务器。node是单线程，启动了create-react-app的服务器之后，就会一直监听在那里，不会再执行第二步命令。所以需要<code>concurrently</code>库来帮助。</p>
+<p><code>concurrently</code>可以“同时”执行多个命令。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  //...</span><br><span class="line">  "scripts": &#123;</span><br><span class="line">    "start": "node scripts/start.js",</span><br><span class="line">    "mystart": "concurrently --kill-others-on-fail \"node server/server.js\" \"npm run start\""</span><br><span class="line">  &#125;,</span><br><span class="line">  //...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参数<code>kill-others-on-fail</code>是当某一个命令失败后，同时结束其他命令。这样我们就可以保证两个服务器同时启动。</p>
+<hr>
+<p>参考来源：</p>
+<p><a href="https://www.fullstackreact.com/articles/using-create-react-app-with-a-server/" target="_blank" rel="noopener">How to get “create-react-app” to work with your API</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Nodejs/" rel="tag"># Nodejs</a>
+          
+            <a href="/tags/React/" rel="tag"># React</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/05/module-exports-vs-exports-vs-export/" rel="next" title="module.exports vs exports vs export">
+                <i class="fa fa-chevron-left"></i> module.exports vs exports vs export
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/12/Fetch-vs-Axios/" rel="prev" title="Fetch vs Axios">
+                Fetch vs Axios <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/photo.jpg" alt="wanderyt">
+          <p class="site-author-name" itemprop="name">wanderyt</p>
+           
+              <p class="site-description motion-element" itemprop="description">wanderyt Blog</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">50</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wanderyt" target="_blank" title="github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2031712337" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/wanderyt" target="_blank" title="twitter">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#搭建Nodejs-Server"><span class="nav-number">1.</span> <span class="nav-text">搭建Nodejs Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#React发送请求"><span class="nav-number">2.</span> <span class="nav-text">React发送请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动服务器"><span class="nav-number">3.</span> <span class="nav-text">启动服务器</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wanderyt</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

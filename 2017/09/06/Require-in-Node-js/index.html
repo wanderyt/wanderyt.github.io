@@ -1,0 +1,939 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Javascript,Nodejs,Module,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="wanderyt的博客" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="Post source: Requiring modules in Node.js: Everything you need to know 这篇文章主要介绍require方法在nodejs开发中的一些应用技巧。除此之外，模块化开发也会有一些涉及。 1const config = require(&apos;/path/to/config&apos;); 针对require()方法，Node的执行步骤主要分以下5步。">
+<meta name="keywords" content="Javascript,Nodejs,Module">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Require in Node.js">
+<meta property="og:url" content="http://wanderyt.github.io/2017/09/06/Require-in-Node-js/index.html">
+<meta property="og:site_name" content="wanderyt的博客">
+<meta property="og:description" content="Post source: Requiring modules in Node.js: Everything you need to know 这篇文章主要介绍require方法在nodejs开发中的一些应用技巧。除此之外，模块化开发也会有一些涉及。 1const config = require(&apos;/path/to/config&apos;); 针对require()方法，Node的执行步骤主要分以下5步。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-05T03:05:12.833Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Require in Node.js">
+<meta name="twitter:description" content="Post source: Requiring modules in Node.js: Everything you need to know 这篇文章主要介绍require方法在nodejs开发中的一些应用技巧。除此之外，模块化开发也会有一些涉及。 1const config = require(&apos;/path/to/config&apos;); 针对require()方法，Node的执行步骤主要分以下5步。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wanderyt.github.io/2017/09/06/Require-in-Node-js/">
+
+
+
+
+
+  <title>Require in Node.js | wanderyt的博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-65056997-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wanderyt的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">会踢足球的程序猿</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input">
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'nsd1ovgQ5zzmNzCi8zYW','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://wanderyt.github.io/2017/09/06/Require-in-Node-js/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wanderyt">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/photo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wanderyt的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Require in Node.js
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-06T14:07:43+08:00">
+                2017-09-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/UI-Development/" itemprop="url" rel="index">
+                    <span itemprop="name">UI Development</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Post source: <a href="https://medium.freecodecamp.org/requiring-modules-in-node-js-everything-you-need-to-know-e7fbd119be8" target="_blank" rel="noopener">Requiring modules in Node.js: Everything you need to know</a></p>
+<p>这篇文章主要介绍require方法在nodejs开发中的一些应用技巧。除此之外，模块化开发也会有一些涉及。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> config = <span class="built_in">require</span>(<span class="string">'/path/to/config'</span>);</span><br></pre></td></tr></table></figure>
+<p>针对<code>require()</code>方法，Node的执行步骤主要分以下5步。</p>
+<ol>
+<li>转义。将相对路径转义（resolve）为绝对路径。</li>
+<li>装载。在这一步中，VM并非会去执行所加载的模块代码。其主要是分析对应路径下的文件是哪种类型，比如.js、.json甚至是c++文件。</li>
+<li>封装。将装载的文件代码封装到一个私有的上下文中，并使其变为可执行代码。</li>
+<li>执行。这一步中，Node的VM才会去执行所装载的代码。</li>
+<li>缓存。将所加载的文件缓存起来，以便下次再require时不需要将前几个步骤再重复一遍。</li>
+</ol>
+<a id="more"></a>
+<h4 id="转义-Resolve"><a href="#转义-Resolve" class="headerlink" title="转义 - Resolve"></a>转义 - Resolve</h4><p>在这一步中，require方法会将文件的路径转为绝对路径。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>(<span class="string">'find-me'</span>);</span><br></pre></td></tr></table></figure>
+<p>Node会查找所有<code>module.paths</code>指定的所有路径下的<code>find-me.js</code>文件。可以通过module.paths方法查看当前查找路径的优先级顺序。</p>
+<pre><code>$ node
+&gt; module.paths
+[ &apos;/Users/username/stubhub/techspace/my-react-story-book/repl/node_modules&apos;,
+&apos;/Users/username/stubhub/techspace/my-react-story-book/node_modules&apos;,
+&apos;/Users/username/stubhub/techspace/node_modules&apos;,
+&apos;/Users/username/stubhub/node_modules&apos;,
+&apos;/Users/username/node_modules&apos;,
+&apos;/Users/node_modules&apos;,
+&apos;/node_modules&apos;,
+&apos;/Users/username/.node_modules&apos;,
+&apos;/Users/username/.node_libraries&apos;,
+&apos;/usr/local/lib/node&apos; ]
+</code></pre><p>如果这个文件没有找到，则会报错：<code>cannot find module error.</code>。</p>
+<p>相对应的，在项目目录下创建一个<code>node_modules</code>文件夹，其中包含一个<code>find-me.js</code>。这样也能require到。</p>
+<pre><code>$ mkdir node_modules
+$ echo console.log(&apos;I am not lost&apos;);&quot; &gt; node_modules/find-me.js
+$ node
+&gt; require(&apos;find-me&apos;);
+I am not lost
+</code></pre><h4 id="require文件夹"><a href="#require文件夹" class="headerlink" title="require文件夹"></a>require文件夹</h4><p>模块化概念中，一个模块不仅仅只是一个文件，还有可能是一个文件夹。可以在<code>node_modules</code>下创建一个<code>find-me</code>文件夹，然后再在其下创建<code>index.js</code>文件，这样也能require到。</p>
+<pre><code>$ mkdir -p node_modules/find-me
+$ echo &quot;console.log(&apos;Found again.&apos;);&quot; &gt; node_modules/find-me/index.js
+$ node
+&gt; require(&apos;find-me&apos;);
+Found again.
+</code></pre><p><code>index.js</code>是默认的模块入口文件。也可以通过在<code>package.json</code>中配置对应的入口文件名来更改。</p>
+<pre><code>$ echo &quot;console.log(&apos;I rule&apos;);&quot; &gt; node_modules/find-me/start.js
+$ echo &apos;{ &quot;name&quot;: &quot;find-me-folder&quot;, &quot;main&quot;: &quot;start.js&quot; }&apos; &gt; node_modules/find-me/package.json
+$ node
+&gt; require(&apos;find-me&apos;);
+I rule
+</code></pre><h4 id="require-resolve"><a href="#require-resolve" class="headerlink" title="require.resolve"></a>require.resolve</h4><p>当我们需要查找确定某一个模块能否被require到（并非需要真去加载执行这个模块），可以用<code>require.resolve(moduleName)</code>来检查。如果模块存在，返回模块的路径；如果不存在，则与<code>require</code>方法一样报错。这对于去引用在<code>package.json</code>中<code>optionalDependencies</code>下定义的模块引用很有用处。</p>
+<pre><code>$ node
+&gt; require.resolve(&apos;find-me&apos;);
+&apos;/Users/samer/learn-node/node_modules/find-me/start.js&apos;
+&gt; require.resolve(&apos;not-there&apos;);
+Error: Cannot find module &apos;not-there&apos;
+</code></pre><h4 id="相对路径-vs-绝对路径"><a href="#相对路径-vs-绝对路径" class="headerlink" title="相对路径 vs 绝对路径"></a>相对路径 vs 绝对路径</h4><p>定义模块路径方面，相对路径以<code>./</code>或者<code>../</code>作为开头，而绝对路径以<code>/</code>作为开头。</p>
+<h4 id="模块相互引用"><a href="#模块相互引用" class="headerlink" title="模块相互引用"></a>模块相互引用</h4><p>创建一个<code>lib/util.js</code>文件和<code>index.js</code>文件，并输出当前<code>module</code>，可以看出node对循环引用的支持。</p>
+<pre><code>$ mkdir lib
+$ echo &quot;console.log(&apos;In util&apos;, module);&quot; &gt; lib/util.js
+$ echo &quot;console.log(&apos;In index&apos;, module); require(&apos;./lib/util&apos;);&quot; &gt; index.js
+</code></pre><p>执行<code>index.js</code>文件，可以看到下列输出。</p>
+<pre><code>$ node index.js
+In index Module {
+    id: &apos;.&apos;,
+    exports: {},
+    parent: null,
+    filename: &apos;/Users/samer/learn-node/index.js&apos;,
+    loaded: false,
+    children: [],
+    paths: [ ... ] }
+In util Module {
+    id: &apos;/Users/samer/learn-node/lib/util.js&apos;,
+    exports: {},
+    parent:
+        Module {
+            id: &apos;.&apos;,
+            exports: {},
+            parent: null,
+            filename: &apos;/Users/samer/learn-node/index.js&apos;,
+            loaded: false,
+            children: [ [Circular] ],
+            paths: [...] },
+    filename: &apos;/Users/samer/learn-node/lib/util.js&apos;,
+    loaded: false,
+    children: [],
+    paths: [...] }
+</code></pre><p>可以看到，在module util中，指出了其父模块为<code>index</code>，但是父模块的介绍中，<code>children</code>的属性被标为<code>[Circular]</code>，否则会陷入无限循环。</p>
+<p>这就引申出了另外一个模块循环引用的问题：如果<code>util</code>模块又引用了<code>index</code>模块？</p>
+<h4 id="exports-module-exports"><a href="#exports-module-exports" class="headerlink" title="exports / module.exports"></a>exports / module.exports</h4><p>对之前两个模块添加<code>exports</code>输出。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Add the following line at the top of lib/util.js</span></span><br><span class="line">exports.id = <span class="string">'lib/util'</span>;</span><br><span class="line"><span class="comment">// Add the following line at the top of index.js</span></span><br><span class="line">exports.id = <span class="string">'index'</span>;</span><br></pre></td></tr></table></figure>
+<p>这时，module的输出就变成：</p>
+<pre><code>$ node index.js
+In index Module {
+    id: &apos;.&apos;,
+    exports: { id: &apos;index&apos; },
+    loaded: false,
+    ... }
+In util Module {
+    id: &apos;/Users/samer/learn-node/lib/util.js&apos;,
+    exports: { id: &apos;lib/util&apos; },
+    parent:
+    Module {
+        id: &apos;.&apos;,
+        exports: { id: &apos;index&apos; },
+        loaded: false,
+        ... },
+    loaded: false,
+    ... }
+</code></pre><p>通常定义module的输出会使用下列语法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">exports.id = <span class="number">1</span>;</span><br><span class="line"><span class="comment">// or</span></span><br><span class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// TBD</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    a: <span class="string">'A'</span>,</span><br><span class="line">    b: <span class="string">'B'</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>可以看一下node module包装之后的代码，理解会更加深刻：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> (<span class="params">require, module, __filename, __dirname</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> exports = <span class="built_in">module</span>.exports;</span><br><span class="line">    <span class="comment">// Your Module Code...</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">module</span>.exports;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>直接给<code>exports</code>赋值则不会生效，因为这只是改变了<code>exports</code>这个变量，但是输出的<code>module.exports</code>没有任何变化。如果是给<code>exports</code>添加更多的属性，则会生效。</p>
+<h4 id="loaded关键字"><a href="#loaded关键字" class="headerlink" title="loaded关键字"></a>loaded关键字</h4><p><code>loaded</code>关键字标示模块是否已经加载完成。可以通过<code>setImmediate</code>方法来检查这个标志。<code>setImmediate</code>方法是在当次event loop结束之后立刻执行。对于加载一个模块来说，event loop就是一次require/load模块的过程，所以下列两种代码执行的效果是一样的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// module A</span></span><br><span class="line">setImmediate(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'the module is loaded!'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'this is module!'</span>);</span><br><span class="line"><span class="comment">//---------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// module B</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'this is module!'</span>);</span><br><span class="line"></span><br><span class="line">setImmediate(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'the module is loaded!'</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>同样，当模块加载完成时，<code>exports</code>对象也立刻执行完毕，所以想通过异步来改变模块输出的数据，是不会成功的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fs.readFile(<span class="string">'/etc/passwd'</span>, (err, data) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">throw</span> err;</span><br><span class="line">    exports.data = data; <span class="comment">// won't work.</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="循环引用"><a href="#循环引用" class="headerlink" title="循环引用"></a>循环引用</h4><p>现在再来看循环引用的案例。创建两个模块：<code>lib/moduleA</code>和<code>lib/moduleB</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// lib/moduleA.js</span></span><br><span class="line">exports.a = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">require</span>(<span class="string">'./moduleB'</span>);</span><br><span class="line">exports.b = <span class="number">2</span>;</span><br><span class="line">exports.c = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// lib/moduleB.js</span></span><br><span class="line"><span class="keyword">const</span> ModuleA = <span class="built_in">require</span>(<span class="string">'./moduleA'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'ModuleA is partially loaded here'</span>, ModuleA);</span><br></pre></td></tr></table></figure>
+<p>执行<code>node moduleA.js</code>时，会得到下列输出：</p>
+<pre><code>$ node lib/module1.js
+Module1 is partially loaded here { a: 1 }
+</code></pre><p>可以看出node对循环引用的支持，依据的原则就是：在加载过程中创建<code>exports</code>对象。如果在加载结束前引用了模块，则只能得到当前执行之后的模块输出。</p>
+<h4 id="node的封装"><a href="#node的封装" class="headerlink" title="node的封装"></a>node的封装</h4><p>通过一句语句就能看出node是对模块进行了封装后再加载：</p>
+<pre><code>$ node
+&gt; require(&apos;module&apos;).wrapper
+[ &apos;(function (exports, require, module, __filename, __dirname) { &apos;,
+&apos;\n});&apos; ]
+</code></pre><p>这五个参数会经常在模块中用到。<code>exports</code>是对<code>module.exports</code>的引用，<code>require</code>和<code>module</code>是执行模块代码必用的函数。<code>__filename</code>和<code>__dirname</code>是封装的模块的文件名和绝对路径。</p>
+<p>也可以通过<code>arguments</code>来输出这几个参数：</p>
+<pre><code>$ echo &quot;console.log(arguments)&quot; &gt; index.js
+$ node index.js
+{ &apos;0&apos;: {},
+&apos;1&apos;:
+{ [Function: require]
+    resolve: [Function: resolve],
+    main:
+    Module {
+        id: &apos;.&apos;,
+        exports: {},
+        parent: null,
+        filename: &apos;/Users/username/index.js&apos;,
+        loaded: false,
+        children: [],
+        paths: [Object] },
+    extensions: { &apos;.js&apos;: [Function], &apos;.json&apos;: [Function], &apos;.node&apos;: [Function] },
+    cache: { &apos;/Users/username/index.js&apos;: [Object] } },
+&apos;2&apos;:
+Module {
+    id: &apos;.&apos;,
+    exports: {},
+    parent: null,
+    filename: &apos;/Users/username/index.js&apos;,
+    loaded: false,
+    children: [],
+    paths:
+    [ &apos;/Users/username/node_modules&apos;,
+        &apos;/Users/node_modules&apos;,
+        &apos;/node_modules&apos; ] },
+&apos;3&apos;: &apos;/Users/username/index.js&apos;,
+&apos;4&apos;: &apos;/Users/username&apos; }
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Javascript/" rel="tag"># Javascript</a>
+          
+            <a href="/tags/Nodejs/" rel="tag"># Nodejs</a>
+          
+            <a href="/tags/Module/" rel="tag"># Module</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/02/Flex-Notes/" rel="next" title="Flex Notes">
+                <i class="fa fa-chevron-left"></i> Flex Notes
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/11/Forbidden-storage-api/" rel="prev" title="Forbidden storage api">
+                Forbidden storage api <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/photo.jpg" alt="wanderyt">
+          <p class="site-author-name" itemprop="name">wanderyt</p>
+           
+              <p class="site-description motion-element" itemprop="description">wanderyt Blog</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">50</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wanderyt" target="_blank" title="github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2031712337" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/wanderyt" target="_blank" title="twitter">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#转义-Resolve"><span class="nav-number">1.</span> <span class="nav-text">转义 - Resolve</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#require文件夹"><span class="nav-number">2.</span> <span class="nav-text">require文件夹</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#require-resolve"><span class="nav-number">3.</span> <span class="nav-text">require.resolve</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#相对路径-vs-绝对路径"><span class="nav-number">4.</span> <span class="nav-text">相对路径 vs 绝对路径</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#模块相互引用"><span class="nav-number">5.</span> <span class="nav-text">模块相互引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#exports-module-exports"><span class="nav-number">6.</span> <span class="nav-text">exports / module.exports</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#loaded关键字"><span class="nav-number">7.</span> <span class="nav-text">loaded关键字</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#循环引用"><span class="nav-number">8.</span> <span class="nav-text">循环引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#node的封装"><span class="nav-number">9.</span> <span class="nav-text">node的封装</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wanderyt</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

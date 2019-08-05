@@ -1,0 +1,831 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Javascript,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="wanderyt的博客" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="属性的简洁表示法ES6允许直接写入变量和函数。这时属性值等于属性名代表的变量。 1234567891011var birth = &apos;2000/01/01&apos;;var Person = &amp;#123;  name: &apos;张三&apos;,  //等同于birth: birth  birth,  // 等同于hello: function ()...  hello() &amp;#123; console.log(&apos;我的名字">
+<meta name="keywords" content="Javascript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ES6 Learning - 对象扩展">
+<meta property="og:url" content="http://wanderyt.github.io/2016/03/30/ES6-Learning-Object-Extensions/index.html">
+<meta property="og:site_name" content="wanderyt的博客">
+<meta property="og:description" content="属性的简洁表示法ES6允许直接写入变量和函数。这时属性值等于属性名代表的变量。 1234567891011var birth = &apos;2000/01/01&apos;;var Person = &amp;#123;  name: &apos;张三&apos;,  //等同于birth: birth  birth,  // 等同于hello: function ()...  hello() &amp;#123; console.log(&apos;我的名字">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-05T03:05:12.830Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ES6 Learning - 对象扩展">
+<meta name="twitter:description" content="属性的简洁表示法ES6允许直接写入变量和函数。这时属性值等于属性名代表的变量。 1234567891011var birth = &apos;2000/01/01&apos;;var Person = &amp;#123;  name: &apos;张三&apos;,  //等同于birth: birth  birth,  // 等同于hello: function ()...  hello() &amp;#123; console.log(&apos;我的名字">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wanderyt.github.io/2016/03/30/ES6-Learning-Object-Extensions/">
+
+
+
+
+
+  <title>ES6 Learning - 对象扩展 | wanderyt的博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-65056997-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wanderyt的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">会踢足球的程序猿</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input">
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'nsd1ovgQ5zzmNzCi8zYW','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://wanderyt.github.io/2016/03/30/ES6-Learning-Object-Extensions/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wanderyt">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/photo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wanderyt的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ES6 Learning - 对象扩展
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-03-30T15:32:31+08:00">
+                2016-03-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/UI-Development/" itemprop="url" rel="index">
+                    <span itemprop="name">UI Development</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="属性的简洁表示法"><a href="#属性的简洁表示法" class="headerlink" title="属性的简洁表示法"></a>属性的简洁表示法</h2><p>ES6允许直接写入变量和函数。这时属性值等于属性名代表的变量。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> birth = <span class="string">'2000/01/01'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Person = &#123;</span><br><span class="line">  name: <span class="string">'张三'</span>,</span><br><span class="line"></span><br><span class="line">  <span class="comment">//等同于birth: birth</span></span><br><span class="line">  birth,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 等同于hello: function ()...</span></span><br><span class="line">  hello() &#123; <span class="built_in">console</span>.log(<span class="string">'我的名字是'</span>, <span class="keyword">this</span>.name); &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="属性名表达式"><a href="#属性名表达式" class="headerlink" title="属性名表达式"></a>属性名表达式</h2><p>ES6支持表达式来定义属性名，使用中括号标识。<strong>注意只在字面量定义对象时才可用。</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">  [propKey]: <span class="literal">true</span>,</span><br><span class="line">  [<span class="string">'a'</span> + <span class="string">'bc'</span>]: <span class="number">123</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>注意，属性名表达式和简洁表示法不能同时使用。</p>
+<h2 id="Object-is"><a href="#Object-is" class="headerlink" title="Object.is()"></a>Object.is()</h2><p><code>==</code>判断会自动转换数据类型，<code>===</code>比较时<code>NaN</code>不等于自身，而且<code>+0</code>和<code>-0</code>相等。</p>
+<p>而<code>Object.is()</code>就是为了弥补<code>===</code>的不足补充进来的方法。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+<span class="number">0</span> === <span class="number">-0</span> <span class="comment">//true</span></span><br><span class="line"><span class="literal">NaN</span> === <span class="literal">NaN</span> <span class="comment">// false</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">Object</span>.is(+<span class="number">0</span>, <span class="number">-0</span>) <span class="comment">// false</span></span><br><span class="line"><span class="built_in">Object</span>.is(<span class="literal">NaN</span>, <span class="literal">NaN</span>) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<h2 id="Object-assign"><a href="#Object-assign" class="headerlink" title="Object.assign()"></a>Object.assign()</h2><p>将源对象（source）的所有可枚举属性，复制到目标对象（target）。</p>
+<pre><code>Object.assign(targetObject, sourceObject1, sourceObject2, ...)
+</code></pre><p>第一个参数即目标对象，后面可以添加一到多个源对象。属性的覆盖只进行替换，不进行添加。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.assign(&#123;<span class="attr">b</span>: <span class="string">'c'</span>&#125;,</span><br><span class="line">  <span class="built_in">Object</span>.defineProperty(&#123;&#125;, <span class="string">'invisible'</span>, &#123;</span><br><span class="line">    enumerable: <span class="literal">false</span>,</span><br><span class="line">    value: <span class="string">'hello'</span></span><br><span class="line">  &#125;)</span><br><span class="line">)</span><br><span class="line"><span class="comment">// &#123; b: 'c' &#125;</span></span><br></pre></td></tr></table></figure>
+<p>这种复制也只是浅复制。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj1 = &#123;<span class="attr">a</span>: &#123;<span class="attr">b</span>: <span class="number">1</span>&#125;&#125;;</span><br><span class="line"><span class="keyword">var</span> obj2 = <span class="built_in">Object</span>.assign(&#123;&#125;, obj1);</span><br><span class="line"></span><br><span class="line">obj1.a.b = <span class="number">2</span>;</span><br><span class="line">obj2.a.b <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+<p>注意，数组因为可以由对象转化而来，所以这里也可以将数组理解为对象，因此：</p>
+<pre><code>Object.assign([1, 2, 3], [4, 5])； // [4, 5, 3]
+</code></pre><h2 id="属性的可枚举性"><a href="#属性的可枚举性" class="headerlink" title="属性的可枚举性"></a>属性的可枚举性</h2><p><code>Object.getOwnPropertyDescriptor</code>来获得属性的行为。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123; <span class="attr">foo</span>: <span class="number">123</span> &#125;;</span><br><span class="line"><span class="built_in">Object</span>.getOwnPropertyDescriptor(obj, <span class="string">'foo'</span>)</span><br><span class="line"><span class="comment">//   &#123; value: 123,</span></span><br><span class="line"><span class="comment">//     writable: true,</span></span><br><span class="line"><span class="comment">//     enumerable: true,</span></span><br><span class="line"><span class="comment">//     configurable: true &#125;</span></span><br></pre></td></tr></table></figure>
+<p><code>enumerable</code>为<code>false</code>时，表示某些操作会忽略。</p>
+<blockquote>
+<p>ES5：</p>
+</blockquote>
+<blockquote>
+<pre><code>for...in 循环：只遍历对象自身的和继承的可枚举的属性
+Object.keys()：返回对象自身的所有可枚举的属性的键名
+JSON.stringify()：只串行化对象自身的可枚举的属性
+</code></pre></blockquote>
+<blockquote>
+<p>ES6：</p>
+</blockquote>
+<blockquote>
+<pre><code>Object.assign()：只拷贝对象自身的可枚举的属性
+Reflect.enumerate()：返回所有for...in循环会遍历的属性
+</code></pre></blockquote>
+<p>引入<code>enumerable</code>的最初目的，就是让某些属性可以规避掉<code>for...in</code>操作。</p>
+<p><strong>操作中引入继承的属性会让问题复杂化，大多数时候，我们只关心对象自身的属性。所以，尽量不要用<code>for...in</code>循环，而用<code>Object.keys()</code>代替。</strong></p>
+<h2 id="遍历方法"><a href="#遍历方法" class="headerlink" title="遍历方法"></a>遍历方法</h2><h3 id="for…in"><a href="#for…in" class="headerlink" title="for…in"></a>for…in</h3><p>遍历对象自身和继承的可枚举属性（不含<code>Symbol</code>属性）。</p>
+<h3 id="Object-keys"><a href="#Object-keys" class="headerlink" title="Object.keys()"></a>Object.keys()</h3><p>返回不含继承的所有可枚举属性（不含<code>Symbol</code>属性）。</p>
+<h3 id="Object-getOwnPropertyNames"><a href="#Object-getOwnPropertyNames" class="headerlink" title="Object.getOwnPropertyNames()"></a>Object.getOwnPropertyNames()</h3><p>返回数组，包含自身所有属性（不含<code>Symbol</code>属性，包含不可枚举属性）。</p>
+<h3 id="Object-getOwnPropertySymbols"><a href="#Object-getOwnPropertySymbols" class="headerlink" title="Object.getOwnPropertySymbols()"></a>Object.getOwnPropertySymbols()</h3><p>返回数组，包含所有<code>Symbol</code>属性。</p>
+<h3 id="Reflect-ownKeys"><a href="#Reflect-ownKeys" class="headerlink" title="Reflect.ownKeys()"></a>Reflect.ownKeys()</h3><p>返回数组，包含所有属性，不管属性名是<code>Symbol</code>或者字符串，也不管是否可枚举。</p>
+<h3 id="Reflect-enumerate"><a href="#Reflect-enumerate" class="headerlink" title="Reflect.enumerate()"></a>Reflect.enumerate()</h3><p>返回一个<code>Iterator</code>对象，遍历对象自身的和继承的所有可枚举属性（不含<code>Symbol</code>属性），与<code>for...in</code>循环相同。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> David = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.name = <span class="string">"David"</span>;</span><br><span class="line">    <span class="keyword">this</span>[<span class="string">"a"</span> + <span class="string">"ge"</span>] = <span class="number">26</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Programmer = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.type = <span class="string">"Programmer"</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">David.prototype = <span class="keyword">new</span> Programmer();</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> david = <span class="keyword">new</span> David();</span><br><span class="line"></span><br><span class="line"><span class="built_in">Object</span>.defineProperty(david, <span class="string">"sex"</span>, &#123;</span><br><span class="line">    enumerable: <span class="literal">false</span>,</span><br><span class="line">    value: <span class="string">"male"</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Object</span>.defineProperty(david, <span class="string">"company"</span>, &#123;</span><br><span class="line">    enumerable: <span class="literal">true</span>,</span><br><span class="line">    value: <span class="string">"SAP"</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// for...in</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">in</span> david) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(i);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">name</span></span><br><span class="line"><span class="comment">age</span></span><br><span class="line"><span class="comment">company</span></span><br><span class="line"><span class="comment">type</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Object.keys</span></span><br><span class="line"><span class="built_in">Object</span>.keys(david)</span><br><span class="line"><span class="comment">// ["name", "age", "company"]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Object.getOwnPropertyNames</span></span><br><span class="line"><span class="built_in">Object</span>.getOwnPropertyNames(david)</span><br><span class="line"><span class="comment">// ["name", "age", "sex", "company"]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Object.getOwnPropertySymbols</span></span><br><span class="line"><span class="built_in">Object</span>.getOwnPropertySymbols(david)</span><br><span class="line"><span class="comment">// []</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Reflect.ownKeys</span></span><br><span class="line"><span class="built_in">Reflect</span>.ownKeys(david)</span><br><span class="line"><span class="comment">// ["name", "age", "sex", "company"]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Reflect.enumerate</span></span><br><span class="line"><span class="built_in">Reflect</span>.enumerate(david);</span><br><span class="line"><span class="keyword">var</span> [...arr] = <span class="built_in">Reflect</span>.enumerate(david);</span><br><span class="line">arr;</span><br><span class="line"><span class="comment">// ["name", "age", "company", "type"]</span></span><br></pre></td></tr></table></figure>
+<p>属性遍历的次序规则是：</p>
+<pre><code>首先遍历所有属性名为数值的属性，按照数字排序。
+其次遍历所有属性名为字符串的属性，按照生成时间排序。
+最后遍历所有属性名为`Symbol`值的属性，按照生成时间排序。
+</code></pre><h2 id="proto"><a href="#proto" class="headerlink" title="proto"></a><strong>proto</strong></h2><p><code>__proto__</code>属性（前后各两个下划线），用来读取或设置当前对象的<code>prototype</code>对象。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// es6的写法</span></span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  method: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; ... &#125;</span><br><span class="line">&#125;</span><br><span class="line">obj.__proto__ = someOtherObj;</span><br><span class="line"></span><br><span class="line"><span class="comment">// es5的写法</span></span><br><span class="line"><span class="keyword">var</span> obj = <span class="built_in">Object</span>.create(someOtherObj);</span><br><span class="line">obj.method = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<p>其实<code>__proto__</code>这种命名方式就体现出这个属性是不想被直接拿来用的，只不过各个浏览器都提供了这样的操作接口，导致这个属性可以直接读写。</p>
+<p>ES6规范中则提供了读写方法：<code>Object.getPrototypeOf(obj)</code>和<code>Object.setPrototypeOf(obj)</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.getPrototypeOf(&#123;&#125;)</span><br><span class="line"><span class="comment">// Object &#123;&#125;</span></span><br><span class="line"><span class="built_in">Object</span>.getPrototypeOf(&#123;<span class="attr">__proto__</span>: <span class="literal">null</span>&#125;)</span><br><span class="line"><span class="comment">// null</span></span><br><span class="line"><span class="built_in">Object</span>.getPrototypeOf(&#123;<span class="attr">__proto__</span>: &#123;<span class="attr">a</span>: <span class="string">"name"</span>&#125;&#125;)</span><br><span class="line"><span class="comment">// Object &#123;a: "name"&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Rectangle</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> rec = <span class="keyword">new</span> Rectangle();</span><br><span class="line"></span><br><span class="line"><span class="built_in">Object</span>.getPrototypeOf(rec) === Rectangle.prototype</span><br><span class="line"><span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Javascript/" rel="tag"># Javascript</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/28/ES6-Learning-Function-Extensions/" rel="next" title="ES6 Learning - 函数扩展">
+                <i class="fa fa-chevron-left"></i> ES6 Learning - 函数扩展
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/31/ES6-Learning-Symbol/" rel="prev" title="ES6 Learning - Symbol">
+                ES6 Learning - Symbol <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/photo.jpg" alt="wanderyt">
+          <p class="site-author-name" itemprop="name">wanderyt</p>
+           
+              <p class="site-description motion-element" itemprop="description">wanderyt Blog</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">50</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wanderyt" target="_blank" title="github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2031712337" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/wanderyt" target="_blank" title="twitter">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  twitter
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#属性的简洁表示法"><span class="nav-number">1.</span> <span class="nav-text">属性的简洁表示法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#属性名表达式"><span class="nav-number">2.</span> <span class="nav-text">属性名表达式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Object-is"><span class="nav-number">3.</span> <span class="nav-text">Object.is()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Object-assign"><span class="nav-number">4.</span> <span class="nav-text">Object.assign()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#属性的可枚举性"><span class="nav-number">5.</span> <span class="nav-text">属性的可枚举性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遍历方法"><span class="nav-number">6.</span> <span class="nav-text">遍历方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#for…in"><span class="nav-number">6.1.</span> <span class="nav-text">for…in</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Object-keys"><span class="nav-number">6.2.</span> <span class="nav-text">Object.keys()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Object-getOwnPropertyNames"><span class="nav-number">6.3.</span> <span class="nav-text">Object.getOwnPropertyNames()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Object-getOwnPropertySymbols"><span class="nav-number">6.4.</span> <span class="nav-text">Object.getOwnPropertySymbols()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reflect-ownKeys"><span class="nav-number">6.5.</span> <span class="nav-text">Reflect.ownKeys()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reflect-enumerate"><span class="nav-number">6.6.</span> <span class="nav-text">Reflect.enumerate()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#proto"><span class="nav-number">7.</span> <span class="nav-text">proto</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wanderyt</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
